@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { schemas, modes, disorders, domains, copingStyles, techniques } from '@/data';
+import { schemas, modes, disorders, domains, copingStyles, techniques, techniqueCategories } from '@/data';
 import { domainColors, modeCategoryColors } from '@/lib/colors';
-import type { Schema, SchemaMode, PersonalityDisorder } from '@/types';
+import type { Schema, SchemaMode, PersonalityDisorder, TherapeuticTechnique } from '@/types';
 import { BookOpen, Brain, Users, Puzzle, Stethoscope, ChevronDown, ChevronUp, Shield, Swords, HandHelping } from 'lucide-react';
 import type { CopingStyleId } from '@/types';
 
@@ -17,7 +17,7 @@ const tabs: { id: TabId; label: string; icon: React.ReactNode }[] = [
   { id: 'schemas', label: 'Schémas (18)', icon: <BookOpen className="w-4 h-4" /> },
   { id: 'modes', label: 'Modes (22)', icon: <Brain className="w-4 h-4" /> },
   { id: 'troubles', label: 'Troubles TP (8)', icon: <Users className="w-4 h-4" /> },
-  { id: 'techniques', label: 'Techniques (8)', icon: <Stethoscope className="w-4 h-4" /> },
+  { id: 'techniques', label: 'Techniques (25)', icon: <Stethoscope className="w-4 h-4" /> },
 ];
 
 // ---------------------------------------------------------------------------
@@ -360,18 +360,18 @@ function DisorderCard({ disorder }: { disorder: PersonalityDisorder }) {
 // Technique Card
 // ---------------------------------------------------------------------------
 
-function TechniqueCard({ technique }: { technique: { id: string; name: string; target: string; mechanism: string; warnings?: string } }) {
+function TechniqueCard({ technique }: { technique: TherapeuticTechnique }) {
   return (
     <ExpandableCard
       header={
         <div className="flex items-center gap-3">
           <Puzzle className="w-4 h-4 text-fuchsia-500" />
           <span className="font-semibold text-slate-800 text-sm">{technique.name}</span>
-          <span className="text-[10px] text-slate-400">{technique.target}</span>
+          <span className="text-[10px] text-slate-400 hidden sm:inline">{technique.target}</span>
         </div>
       }
     >
-      <div className="space-y-3 text-sm">
+      <div className="space-y-4 text-sm">
         <div>
           <h4 className="text-[11px] font-semibold uppercase text-slate-400 mb-1">Cible</h4>
           <p className="text-slate-600">{technique.target}</p>
@@ -380,9 +380,22 @@ function TechniqueCard({ technique }: { technique: { id: string; name: string; t
           <h4 className="text-[11px] font-semibold uppercase text-slate-400 mb-1">Mécanisme</h4>
           <p className="text-slate-600 leading-relaxed">{technique.mechanism}</p>
         </div>
+        {technique.howTo && (
+          <div className="rounded-lg border border-sky-200 bg-sky-50 p-3">
+            <h4 className="text-[11px] font-semibold uppercase text-sky-700 mb-1">Comment l&apos;utiliser</h4>
+            <p className="text-xs text-sky-900 leading-relaxed">{technique.howTo}</p>
+          </div>
+        )}
+        {technique.whyUse && (
+          <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3">
+            <h4 className="text-[11px] font-semibold uppercase text-emerald-700 mb-1">Pourquoi l&apos;utiliser</h4>
+            <p className="text-xs text-emerald-900 leading-relaxed">{technique.whyUse}</p>
+          </div>
+        )}
         {technique.warnings && (
           <div className="rounded-lg border border-amber-200 bg-amber-50 p-3">
-            <p className="text-xs text-amber-800">{technique.warnings}</p>
+            <h4 className="text-[11px] font-semibold uppercase text-amber-700 mb-1">Précautions</h4>
+            <p className="text-xs text-amber-800 leading-relaxed">{technique.warnings}</p>
           </div>
         )}
       </div>
@@ -532,6 +545,56 @@ function renderCopingStrategy(strategyId: CopingStyleId, strategyModes: SchemaMo
 }
 
 // ---------------------------------------------------------------------------
+// Techniques Grouped View — by category
+// ---------------------------------------------------------------------------
+
+const categoryIcons: Record<string, React.ReactNode> = {
+  evaluation: <BookOpen className="w-4 h-4" />,
+  emotionnel: <Brain className="w-4 h-4" />,
+  cognitif: <Puzzle className="w-4 h-4" />,
+  comportemental: <Swords className="w-4 h-4" />,
+  relationnel: <HandHelping className="w-4 h-4" />,
+};
+
+function TechniquesGroupedView() {
+  return (
+    <div className="space-y-8">
+      {techniqueCategories.map((cat) => {
+        const catTechniques = techniques.filter((t) => t.categoryId === cat.id);
+        if (catTechniques.length === 0) return null;
+        return (
+          <section key={cat.id}>
+            <div
+              className="rounded-xl border p-4 mb-3"
+              style={{ borderColor: cat.borderColor, backgroundColor: cat.bgColor }}
+            >
+              <div className="flex items-center gap-2 mb-1">
+                <span style={{ color: cat.color }}>{categoryIcons[cat.id]}</span>
+                <h2 className="font-bold text-sm" style={{ color: cat.color }}>
+                  {cat.name}
+                </h2>
+                <span
+                  className="text-[10px] px-2 py-0.5 rounded-full border font-medium"
+                  style={{ borderColor: cat.borderColor, color: cat.color }}
+                >
+                  {catTechniques.length} techniques
+                </span>
+              </div>
+              <p className="text-xs text-slate-500 ml-7">{cat.description}</p>
+            </div>
+            <div className="space-y-3">
+              {catTechniques.map((t) => (
+                <TechniqueCard key={t.id} technique={t} />
+              ))}
+            </div>
+          </section>
+        );
+      })}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Domain filter for schemas
 // ---------------------------------------------------------------------------
 
@@ -645,11 +708,7 @@ export default function FichesPage() {
 
         {/* Techniques tab */}
         {activeTab === 'techniques' && (
-          <div className="space-y-3">
-            {techniques.map((t) => (
-              <TechniqueCard key={t.id} technique={t} />
-            ))}
-          </div>
+          <TechniquesGroupedView />
         )}
       </div>
     </div>

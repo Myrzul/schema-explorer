@@ -127,12 +127,31 @@ export interface DisorderSpecificMode {
   schemaIds: string[];
 }
 
+export type TechniqueCategoryId =
+  | 'evaluation'
+  | 'emotionnel'
+  | 'cognitif'
+  | 'comportemental'
+  | 'relationnel';
+
 export interface TherapeuticTechnique {
   id: string;
   name: string;
+  categoryId: TechniqueCategoryId;
   target: string;
   mechanism: string;
+  howTo?: string;
+  whyUse?: string;
   warnings?: string;
+}
+
+export interface TechniqueCategory {
+  id: TechniqueCategoryId;
+  name: string;
+  description: string;
+  color: string;
+  bgColor: string;
+  borderColor: string;
 }
 
 export interface Relationship {

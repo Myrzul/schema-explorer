@@ -6,4 +6,4 @@ export { copingStyles } from './coping-styles';
 export { disorders } from './disorders';
 export { relationships } from './relationships';
 export { cascades } from './cascades';
-export { techniques } from './techniques';
+export { techniques, techniqueCategories } from './techniques';
