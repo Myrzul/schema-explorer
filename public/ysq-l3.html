@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YSQ-L3 — Questionnaire des Schémas de Young</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #f4f1ec;
+  --bg-card: #fffdf9;
+  --bg-card-done: #f6faf6;
+  --text: #2a2520;
+  --text-secondary: #7a7068;
+  --text-muted: #a8a098;
+  --border: #e4dfd8;
+  --border-light: #ede9e3;
+  --accent: #3d6b5e;
+  --accent-light: #5a9a86;
+  --accent-bg: #eaf4f0;
+  --domain-a: #b8453a;
+  --domain-b: #c87d2a;
+  --domain-c: #3a6fa8;
+  --domain-d: #3a8a5c;
+  --domain-e: #7a4a9a;
+  --radius: 10px;
+  --radius-lg: 16px;
+  --shadow-sm: 0 1px 3px rgba(42,37,32,0.06);
+  --shadow-md: 0 4px 16px rgba(42,37,32,0.08);
+  --font-body: 'DM Sans', system-ui, sans-serif;
+  --font-display: 'Fraunces', Georgia, serif;
+  --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 20px 16px;
+}
+
+/* --- SCREENS --- */
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* --- INTRO --- */
+.intro-header {
+  text-align: center;
+  padding: 40px 0 28px;
+}
+.intro-header .eyebrow {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+.intro-header h1 {
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.15;
+  margin-bottom: 6px;
+}
+.intro-header .subtitle {
+  font-size: 16px;
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+.card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-bottom: 16px;
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+}
+
+.card p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+.card p strong { color: var(--text); }
+
+.scale-reminder {
+  margin-top: 16px;
+  padding: 14px 18px;
+  background: var(--accent-bg);
+  border-radius: var(--radius);
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.scale-reminder .scale-title {
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+.scale-reminder .scale-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.scale-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  padding: 3px 0;
+}
+.scale-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+  background: var(--accent);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.form-group { margin-bottom: 16px; }
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.form-group input {
+  width: 100%;
+  padding: 11px 14px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border);
+  font-size: 14px;
+  font-family: var(--font-body);
+  color: var(--text);
+  background: white;
+  outline: none;
+  transition: border-color var(--transition);
+}
+.form-group input:focus { border-color: var(--accent); }
+
+.btn-primary {
+  display: block;
+  width: 100%;
+  padding: 16px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 15px;
+  font-weight: 700;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: all var(--transition);
+  box-shadow: 0 2px 12px rgba(61,107,94,0.25);
+  letter-spacing: 0.3px;
+}
+.btn-primary:hover { background: #345c50; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(61,107,94,0.3); }
+.btn-primary:active { transform: translateY(0); }
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 24px;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-weight: 600;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+/* --- QUESTIONNAIRE --- */
+.q-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--bg);
+  padding: 12px 0 8px;
+}
+
+.q-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.q-topbar-title { font-size: 13px; font-weight: 700; color: var(--text); }
+.q-topbar-count { font-size: 12px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+
+.progress-track {
+  height: 6px;
+  background: var(--border-light);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent-light));
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+.schema-nav {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  padding: 8px 0 4px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.schema-nav::-webkit-scrollbar { display: none; }
+
+.schema-tab {
+  padding: 5px 9px;
+  border-radius: 6px;
+  border: 1.5px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-muted);
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  flex-shrink: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all var(--transition);
+  font-family: var(--font-body);
+}
+.schema-tab:hover { border-color: #bbb; }
+.schema-tab.active { border-color: var(--tab-color, var(--accent)); color: var(--tab-color, var(--accent)); background: white; }
+.schema-tab.done { background: var(--tab-color, var(--accent)); color: white; border-color: var(--tab-color, var(--accent)); }
+
+.schema-header {
+  margin: 14px 0 10px;
+  padding: 14px 18px;
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  border-left: 4px solid var(--domain-color, var(--accent));
+  box-shadow: var(--shadow-sm);
+}
+.schema-header .domain-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--domain-color, var(--accent));
+}
+.schema-header .schema-name {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text);
+  margin-top: 2px;
+}
+.schema-header .schema-name .code {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-left: 6px;
+}
+.schema-header .schema-progress {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 3px;
+}
+
+.scale-mini {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 8px;
+  margin-bottom: 6px;
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+/* Question cards */
+.question {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  border: 1.5px solid var(--border-light);
+  transition: border-color var(--transition), background var(--transition);
+  box-shadow: var(--shadow-sm);
+}
+.question.answered {
+  border-color: #c8ddd4;
+  background: var(--bg-card-done);
+}
+.question-top {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.question-num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  height: 26px;
+  border-radius: 6px;
+  background: var(--border-light);
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 1px;
+  transition: all var(--transition);
+}
+.question.answered .question-num {
+  background: var(--accent);
+  color: white;
+}
+.question-text {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--text);
+  flex: 1;
+}
+.likert {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+  padding-left: 40px;
+}
+.likert-btn {
+  width: 44px;
+  height: 42px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border);
+  background: white;
+  color: var(--text-secondary);
+  font-size: 15px;
+  font-weight: 500;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: all var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.likert-btn:hover { border-color: var(--accent); color: var(--accent); }
+.likert-btn.selected {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(61,107,94,0.25);
+}
+
+.nav-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+.nav-row .btn-secondary { flex: 1; justify-content: center; }
+.nav-row .btn-primary { flex: 1; }
+.btn-primary:disabled { opacity: 0.5; cursor: default; pointer-events: none; }
+
+.partial-link {
+  display: block;
+  text-align: center;
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--text-muted);
+  cursor: pointer;
+  text-decoration: underline;
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+}
+.partial-link:hover { color: var(--accent); }
+
+/* --- RESULTS --- */
+.results-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+.results-header h2 {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text);
+}
+.results-header .results-meta {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.legend-row {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.result-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-bottom: 16px;
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+}
+.result-card h3 {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 16px;
+}
+
+.chart-container {
+  display: flex;
+  justify-content: center;
+  overflow: visible;
+}
+
+.domain-block { margin-bottom: 18px; }
+.domain-block:last-child { margin-bottom: 0; }
+.domain-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.domain-name { font-size: 13px; font-weight: 600; }
+.domain-mean { font-size: 13px; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
+.domain-bar {
+  height: 8px;
+  background: var(--border-light);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.domain-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.6s ease;
+}
+.domain-schemas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 6px;
+}
+.schema-chip {
+  font-size: 11px;
+  padding: 3px 9px;
+  border-radius: 20px;
+  font-weight: 500;
+}
+.schema-chip.high { background: #fde8e6; color: var(--domain-a); font-weight: 600; }
+.schema-chip.mid { background: #fef6e0; color: #856404; font-weight: 600; }
+.schema-chip.low { background: #f0ede8; color: var(--text-muted); }
+
+/* Detail table */
+.detail-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.detail-table th {
+  text-align: left;
+  padding: 8px 10px;
+  font-weight: 600;
+  background: #f8f5f0;
+  border-bottom: 2px solid var(--border);
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.detail-table th.num { text-align: center; }
+.detail-table td {
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--border-light);
+}
+.detail-table td.num { text-align: center; font-variant-numeric: tabular-nums; }
+.detail-table td.code { font-weight: 700; }
+.detail-table tr.high-row { background: #fef8f7; }
+.detail-table tr.mid-row { background: #fefcf3; }
+
+.pdf-section {
+  text-align: center;
+  margin-top: 24px;
+  margin-bottom: 12px;
+}
+.pdf-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 6px;
+}
+.back-link {
+  text-align: center;
+  margin-top: 16px;
+  padding-bottom: 30px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-in { animation: fadeIn 0.35s ease forwards; }
+
+/* Print styles */
+@media print {
+  body { background: white; }
+  .q-sticky, .schema-nav, .nav-row, .pdf-section, .back-link, .partial-link { display: none !important; }
+  .result-card { break-inside: avoid; box-shadow: none; border: 1px solid #ddd; }
+  .container { max-width: 100%; padding: 0 20px; }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .likert { padding-left: 0; margin-top: 8px; }
+  .likert-btn { width: 40px; height: 38px; font-size: 14px; }
+  .intro-header h1 { font-size: 24px; }
+}
+</style>
+</head>
+<body>
+
+<div class="container" id="app">
+
+  <!-- ========== INTRO SCREEN ========== -->
+  <div class="screen active" id="screen-intro">
+    <div class="intro-header fade-in">
+      <div class="eyebrow">Jeffrey Young, Ph.D.</div>
+      <h1>Questionnaire des Schémas</h1>
+      <div class="subtitle">YSQ-L3 — 232 items</div>
+    </div>
+
+    <div class="card fade-in" style="animation-delay:0.08s">
+      <p>
+        Vous allez trouver ci-dessous des affirmations qui pourraient être utilisées pour se décrire.
+        Évaluez dans quelle mesure chaque affirmation constitue une bonne description de vous-même.
+        <strong>Basez votre réponse sur ce que vous ressentez émotionnellement</strong>, et non sur ce que vous pensez rationnellement être vrai.
+      </p>
+      <div class="scale-reminder">
+        <div class="scale-title">Échelle de cotation</div>
+        <div class="scale-row">
+          <span class="scale-item"><span class="scale-num">1</span> Complètement faux</span>
+          <span class="scale-item"><span class="scale-num">2</span> Le plus souvent faux</span>
+          <span class="scale-item"><span class="scale-num">3</span> Plutôt vrai que faux</span>
+        </div>
+        <div class="scale-row" style="margin-top:4px">
+          <span class="scale-item"><span class="scale-num">4</span> Assez vrai</span>
+          <span class="scale-item"><span class="scale-num">5</span> Le plus souvent vrai</span>
+          <span class="scale-item"><span class="scale-num">6</span> Me décrit parfaitement</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card fade-in" style="animation-delay:0.14s">
+      <div class="form-group">
+        <label for="patientName">Nom du patient (optionnel)</label>
+        <input type="text" id="patientName" placeholder="Prénom Nom" autocomplete="off">
+      </div>
+      <div class="form-group" style="margin-bottom:0">
+        <label for="patientDate">Date</label>
+        <input type="date" id="patientDate">
+      </div>
+    </div>
+
+    <button class="btn-primary fade-in" style="animation-delay:0.2s" onclick="startQuestionnaire()">
+      Commencer le questionnaire
+    </button>
+  </div>
+
+  <!-- ========== QUESTIONNAIRE SCREEN ========== -->
+  <div class="screen" id="screen-questionnaire">
+    <div class="q-sticky">
+      <div class="q-topbar">
+        <span class="q-topbar-title">YSQ-L3</span>
+        <span class="q-topbar-count" id="globalCount">0 / 232</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+      </div>
+      <div class="schema-nav" id="schemaNav"></div>
+    </div>
+
+    <div id="schemaHeader" class="schema-header"></div>
+
+    <div class="scale-mini">
+      <span>1 = Complètement faux</span>
+      <span>6 = Me décrit parfaitement</span>
+    </div>
+
+    <div id="questionsContainer"></div>
+
+    <div class="nav-row" id="navRow"></div>
+    <button class="partial-link" id="partialLink" style="display:none" onclick="showResults()">
+      Voir les résultats partiels
+    </button>
+  </div>
+
+  <!-- ========== RESULTS SCREEN ========== -->
+  <div class="screen" id="screen-results">
+    <div id="resultsContent"></div>
+    <div class="back-link">
+      <button class="btn-secondary" onclick="backToQuestionnaire()">Revenir au questionnaire</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ================================================================
+// DATA
+// ================================================================
+const SCHEMAS=[{code:"ed",name:"Manque Affectif",domain:"A",domain_name:"Séparation et Rejet",items:[{n:1,t:"Les autres n'ont pas satisfait mes besoins affectifs."},{n:2,t:"Je n'ai pas reçu suffisamment d'amour et d'attention."},{n:3,t:"Dans l'ensemble, je n'ai eu personne sur qui compter pour recevoir des conseils ou du soutien affectif."},{n:4,t:"La plupart du temps, je n'ai eu personne pour m'aider à grandir, pour partager son univers intérieur avec moi, ou qui se soucie profondément de tout ce qui m'arrive."},{n:5,t:"Pour la plus grande partie de ma vie, je n'ai eu personne qui veuille être près de moi et passer beaucoup de temps avec moi."},{n:6,t:"En général, les autres n'ont pas été présents pour me prendre dans leurs bras, pour me donner de la chaleur et de l'affection."},{n:7,t:"Pour la plus grande partie de ma vie, je n'ai jamais eu le sentiment que je représentais quelqu'un d'important pour quelqu'un d'autre."},{n:8,t:"En grande partie, je n'ai eu personne qui m'écoute réellement, me comprenne et soit sensible à mes besoins et mes sentiments véritables."},{n:9,t:"J'ai rarement eu une personne forte pour me donner de bons conseils ou pour me guider lorsque je ne savais pas quoi faire."}]},{code:"ab",name:"Abandon/Instabilité",domain:"A",domain_name:"Séparation et Rejet",items:[{n:10,t:"Je suis préoccupé(e) par le fait que les gens que j'aime vont mourir bientôt même s'il y a peu de raisons médicales à ma préoccupation."},{n:11,t:"Je m'accroche aux gens dont je suis proche par peur qu'ils ne me quittent."},{n:12,t:"Je crains que les gens dont je me sens proche ne me quittent ou ne m'abandonnent."},{n:13,t:"J'ai le sentiment de manquer d'une base stable qui me soutienne affectivement."},{n:14,t:"Je n'ai pas l'impression que les relations importantes dureront : je m'attends à ce qu'elles finissent."},{n:15,t:"Je me sens \"accro\" aux partenaires qui ne peuvent pas s'engager avec moi de façon stable."},{n:16,t:"Je finirai seul(e)."},{n:17,t:"Quand je sens que quelqu'un à qui je tiens s'éloigne de moi, je deviens désespéré."},{n:18,t:"Quelquefois j'ai tellement peur que les gens m'abandonnent que je les repousse."},{n:19,t:"Je deviens bouleversé(e) quand quelqu'un me laisse seul(e) même pour une courte période."},{n:20,t:"Je ne peux compter sur la présence régulière de ceux qui me soutiennent."},{n:21,t:"Je ne peux me permettre d'être vraiment proche des autres car je ne peux être sûr(e) qu'ils seront toujours là."},{n:22,t:"Il me semble que les personnes importantes dans ma vie sont toujours en train de venir et de repartir."},{n:23,t:"J'ai très peur que les personnes que j'aime ne trouvent quelqu'un d'autre qu'elles préfèrent et qu'elles m'abandonnent."},{n:24,t:"Les gens qui me sont proches ont toujours été très imprévisibles : un moment ils sont disponibles et gentils, puis, ils sont fâchés, contrariés, querelleurs, préoccupés par eux-mêmes…"},{n:25,t:"J'ai tellement besoin des autres que j'ai peur de les perdre."},{n:26,t:"Je ne peux être moi-même ou exprimer ce que je ressens véritablement, sinon les autres vont me quitter."}]},{code:"ma",name:"Méfiance/Abus",domain:"A",domain_name:"Séparation et Rejet",items:[{n:27,t:"J'ai l'impression que les autres vont profiter de moi."},{n:28,t:"J'ai souvent l'impression que je dois me protéger des autres."},{n:29,t:"J'ai l'impression que je dois être sur mes gardes en présence des autres sinon ils me blesseront intentionnellement."},{n:30,t:"Si une personne est aimable avec moi, je suppose qu'elle cherche à obtenir quelque chose."},{n:31,t:"Ce n'est qu'une question de temps avant que quelqu'un me trahisse."},{n:32,t:"La plupart des gens pensent uniquement à eux."},{n:33,t:"J'ai la plus grande difficulté à faire confiance aux autres."},{n:34,t:"Je suis très méfiant quant aux motivations des autres."},{n:35,t:"Les autres sont rarement honnêtes, ils ne sont pas en général ce qu'ils paraissent."},{n:36,t:"Je m'interroge habituellement sur les véritables intentions des autres."},{n:37,t:"Si je pense que quelqu'un cherche à me blesser, je cherche à le blesser en premier."},{n:38,t:"Les autres habituellement doivent faire leurs preuves avant que je leur accorde ma confiance."},{n:39,t:"Je teste les autres pour voir s'ils me disent la vérité ou s'ils sont bien intentionnés."},{n:40,t:"Je souscris à la croyance : «Contrôle ou tu seras contrôlé(e).»"},{n:41,t:"Je me mets en colère quand je pense aux façons dont j'ai été maltraité par les autres tout au long de ma vie."},{n:42,t:"Tout au long de ma vie, mes proches ont profité de moi et m'ont utilisé à leurs propres desseins."},{n:43,t:"J'ai été physiquement, émotionnellement, ou sexuellement abusé(e) par des personnes importantes de ma vie."}]},{code:"si",name:"Isolement Social",domain:"A",domain_name:"Séparation et Rejet",items:[{n:44,t:"Je ne suis pas adapté(e)."},{n:45,t:"Je suis fondamentalement différent(e) des autres."},{n:46,t:"Je suis à part; je suis un(e) solitaire."},{n:47,t:"Je me sens étranger(ère) aux autres."},{n:48,t:"Je me sens isolé(e) et seul(e)."},{n:49,t:"Je me sens toujours à l'extérieur des groupes."},{n:50,t:"Personne ne me comprend vraiment."},{n:51,t:"Ma famille a toujours été différente des autres familles."},{n:52,t:"J'ai parfois le sentiment d'être un étranger."},{n:53,t:"Si je disparaissais demain, personne ne le remarquerait."}]},{code:"ds",name:"Imperfection/Honte",domain:"A",domain_name:"Séparation et Rejet",items:[{n:54,t:"Aucun homme ou femme que je désire ne pourrait m'aimer une fois qu'il(elle) aurait vu mes défauts."},{n:55,t:"Aucune personne que je désire ne pourrait rester proche de moi si elle savait qui je suis réellement."},{n:56,t:"Je suis fondamentalement imparfait et marqué(e) par un défaut."},{n:57,t:"Même si je me donne le plus grand mal, je sens qu'il ne me sera pas possible d'obtenir le respect d'un homme ou d'une femme important(e) et de sentir que j'ai de la valeur."},{n:58,t:"Je ne mérite pas l'amour, l'attention et le respect des autres."},{n:59,t:"J'ai le sentiment d'être quelqu'un que l'on ne peut pas aimer."},{n:60,t:"Je suis trop fondamentalement inacceptable pour me révéler aux autres."},{n:61,t:"Je ne pourrais pas affronter les gens, s'ils découvraient mes défauts fondamentaux."},{n:62,t:"Lorsque les gens m'apprécient, j'ai l'impression de les duper."},{n:63,t:"Je suis souvent attiré(e) par les gens qui sont très critiques envers moi ou qui me rejettent."},{n:64,t:"J'ai des secrets que je ne veux pas que mes proches découvrent."},{n:65,t:"C'est de ma faute si mes parents n'ont pas pu m'aimer suffisamment."},{n:66,t:"Je ne laisse pas les gens connaître ce que je suis réellement."},{n:67,t:"Une de mes plus grandes peurs est que mes défauts deviennent publics."},{n:68,t:"Je ne puis comprendre comment qui que ce soit pourrait m'aimer."}]},{code:"fa",name:"Échec",domain:"B",domain_name:"Manque d'Autonomie et de Performance",items:[{n:69,t:"Presque rien de ce que je fais au travail (ou à l'école) n'est aussi bon que ce que font les autres."},{n:70,t:"Je suis incompétent(e) quand il s'agit de réussir."},{n:71,t:"La plupart des gens sont plus doués que moi en ce qui concerne le travail (ou l'école) et la réussite."},{n:72,t:"Je suis un(e) raté(e)."},{n:73,t:"Je n'ai pas autant de talent que les autres au travail (ou à l'école)."},{n:74,t:"Je ne suis pas aussi intelligent(e) que la plupart des gens quand il s'agit du travail (ou de l'école)."},{n:75,t:"Je suis humilié(e) par mes échecs ou mes insuffisances dans le monde du travail (ou de l'école)."},{n:76,t:"Je suis souvent mal à l'aise avec les autres, car je ne les vaux pas en termes de réussites."},{n:77,t:"Je compare souvent mes réalisations à celles des autres et je trouve qu'ils réussissent beaucoup mieux."}]},{code:"di",name:"Dépendance/Incompétence",domain:"B",domain_name:"Manque d'Autonomie et de Performance",items:[{n:78,t:"Je ne me sens pas capable de me débrouiller par moi-même dans la vie de tous les jours."},{n:79,t:"J'ai besoin des autres pour m'aider à m'en sortir."},{n:80,t:"Je n'ai pas le sentiment que je puisse bien m'adapter par moi-même."},{n:81,t:"Je crois que les autres peuvent prendre soin de moi mieux que je ne le peux moi-même."},{n:82,t:"J'ai des difficultés à prendre en charge de nouvelles tâches en dehors du travail à moins que quelqu'un ne me guide."},{n:83,t:"Je me considère comme une personne dépendante en ce qui concerne la vie de tous les jours."},{n:84,t:"Je bousille tout ce que j'entreprends, même à l'extérieur du travail (ou de l'école)."},{n:85,t:"Je suis stupide dans la plupart des domaines de la vie."},{n:86,t:"Si je me fie à mon jugement dans la vie de tous les jours, je vais prendre la mauvaise décision."},{n:87,t:"Je manque de bon sens."},{n:88,t:"On ne peut se fier à mon jugement dans les situations quotidiennes."},{n:89,t:"Je n'ai pas confiance dans ma capacité à résoudre les problèmes qui se posent tous les jours."},{n:90,t:"Je pense avoir besoin de quelqu'un sur qui je puisse compter pour me donner des conseils sur les questions pratiques."},{n:91,t:"Je me sens plus un(e) enfant qu'un(e) adulte quand il s'agit de prendre en main les responsabilités quotidiennes."},{n:92,t:"Je me sens dépassé par les responsabilités de tous les jours."}]},{code:"vu",name:"Peur du Danger ou de la Maladie",domain:"B",domain_name:"Manque d'Autonomie et de Performance",items:[{n:93,t:"Il ne me semble pas possible d'échapper au sentiment que quelque chose de mauvais va bientôt se passer."},{n:94,t:"J'ai l'impression qu'un désastre naturel, criminel, financier ou médical pourrait frapper à tout moment."},{n:95,t:"J'ai peur de devenir un(e) sans domicile fixe ou un(e) mendiant(e)."},{n:96,t:"J'ai peur d'être attaqué(e)."},{n:97,t:"Je prends de grandes précautions pour éviter de tomber malade ou d'être blessé(e)."},{n:98,t:"J'ai peur d'avoir une maladie grave, même si rien de sérieux n'a été diagnostiqué par un médecin."},{n:99,t:"Je suis quelqu'un de peureux(se)."},{n:100,t:"Je me soucie beaucoup de ce qui va mal dans le monde : le crime, la pollution, etc."},{n:101,t:"J'ai souvent le sentiment que je pourrais devenir fou(folle)."},{n:102,t:"J'ai souvent l'impression que je vais avoir une crise d'angoisse."},{n:103,t:"J'ai souvent peur d'avoir une crise cardiaque ou un cancer, même s'il y a peu de raisons médicales de s'en soucier."},{n:104,t:"Je pense que le monde est un endroit dangereux."}]},{code:"eu",name:"Fusionnement/Personnalité Atrophiée",domain:"B",domain_name:"Manque d'Autonomie et de Performance",items:[{n:105,t:"Je n'ai pas pu me séparer de ma mère ou de mon père comme semblent le faire les gens de mon âge."},{n:106,t:"Mes parents et moi avons tendance à être sur-impliqués dans nos vies et nos problèmes réciproques."},{n:107,t:"Il est très difficile, pour mes parents et moi-même, de garder secrets, chacun pour soi, certains détails intimes, sans nous sentir trahis ou coupables."},{n:108,t:"Mes parents et moi devons nous parler presque tous les jours, sinon l'un de nous se sent coupable, blessé(e), déçu(e), ou seul(e)."},{n:109,t:"J'ai souvent l'impression de ne pas avoir une identité distincte de celle de mes parents ou de mon partenaire."},{n:110,t:"J'ai souvent l'impression que mes parents vivent à travers moi — je n'ai pas une vie qui me soit propre."},{n:111,t:"Il m'est vraiment ardu de maintenir une distance vis-à-vis des gens dont je suis intime ; il m'est difficile de me sentir une personne séparée."},{n:112,t:"Je suis tellement lié(e) à mon partenaire ou à mes parents que je ne sais pas vraiment qui je suis ou ce que je veux."},{n:113,t:"J'éprouve des difficultés à distinguer mon point de vue ou mon opinion de ceux de mes parents ou de mon partenaire."},{n:114,t:"J'ai souvent l'impression de ne pas avoir d'intimité par rapport à mes parents ou mon partenaire."},{n:115,t:"Je sens que mes parents seraient vraiment peinés si je vivais seul(e), loin d'eux."}]},{code:"sb",name:"Assujettissement",domain:"D",domain_name:"Orientation vers les Autres",items:[{n:116,t:"Je laisse les autres faire ce qu'ils veulent, car j'ai peur des conséquences."},{n:117,t:"Je pense que si je fais ce que je veux, je cours après les problèmes."},{n:118,t:"Je sens que je n'ai pas d'autre choix que de me soumettre aux souhaits des autres, sinon ils exerceront des représailles ou me rejetteront d'une façon ou d'une autre."},{n:119,t:"Dans mes relations, je laisse l'autre avoir le dessus sur moi."},{n:120,t:"Je laisse toujours les autres choisir à ma place, si bien que je ne sais pas vraiment ce que je veux moi-même."},{n:121,t:"J'ai le sentiment que les décisions importantes de ma vie n'étaient pas vraiment les miennes."},{n:122,t:"Je me soucie beaucoup de plaire aux autres, pour qu'ils ne me rejettent pas."},{n:123,t:"J'ai beaucoup de difficultés à exiger que mes droits soient respectés et que mes sentiments soient pris en compte."},{n:124,t:"Plutôt que manifester ouvertement ma colère, je me venge dans des petites choses."},{n:125,t:"Je vais tolérer beaucoup plus de choses que la plupart des gens afin d'éviter une confrontation."}]},{code:"ss",name:"Abnégation",domain:"D",domain_name:"Orientation vers les Autres",items:[{n:126,t:"Je fais passer les besoins des autres avant les miens, sinon je me sens coupable."},{n:127,t:"Je me sens coupable si je laisse tomber les autres ou si je les déçois."},{n:128,t:"Je donne davantage aux autres que je ne reçois en retour."},{n:129,t:"Je suis celui (celle) qui finit généralement par prendre soin des gens dont je suis proche."},{n:130,t:"Il n'y a presque rien que je ne puisse supporter lorsque j'aime quelqu'un."},{n:131,t:"Je suis quelqu'un de bon car je pense aux autres plus qu'à moi-même."},{n:132,t:"Au travail, je suis habituellement celui (celle) qui est volontaire pour faire des heures ou des tâches supplémentaires."},{n:133,t:"Même si je suis très occupé(e), je trouve toujours du temps pour les autres."},{n:134,t:"Je peux m'en sortir avec vraiment très peu car mes besoins sont minimes."},{n:135,t:"Je ne suis heureux que si les gens qui m'entourent le sont aussi."},{n:136,t:"Je suis tellement occupé(e) à me dévouer pour les gens qui m'importent que j'ai très peu de temps pour moi."},{n:137,t:"J'ai toujours été celui (celle) qui écoute les problèmes des autres."},{n:138,t:"Je me sens plus à l'aise pour donner un cadeau que pour en recevoir un."},{n:139,t:"On me voit comme quelqu'un qui en fait trop pour les autres et pas assez pour lui-même."},{n:140,t:"Peu importe combien je donne, ce n'est jamais assez."},{n:141,t:"Si je fais ce que je veux, je me sens vraiment mal à l'aise."},{n:142,t:"Il m'est vraiment difficile de demander aux autres de se soucier de mes besoins."}]},{code:"ei",name:"Surcontrôle Émotionnel",domain:"E",domain_name:"Survigilance et Inhibition",items:[{n:143,t:"J'ai peur de perdre le contrôle de mes actes."},{n:144,t:"J'ai peur de faire du mal à quelqu'un, physiquement ou affectivement, si je perds tout contrôle sur ma colère."},{n:145,t:"Je sens que je dois contrôler mes émotions et mes impulsions, sinon quelque chose de déplorable risque de se produire."},{n:146,t:"J'en arrive à accumuler en moi beaucoup de colère et de ressentiment que je n'exprime pas."},{n:147,t:"Je suis trop gêné(e) pour exprimer des sentiments positifs aux autres (par ex. de l'affection, de l'intérêt)."},{n:148,t:"Je trouve embarrassant d'exprimer mes sentiments aux autres."},{n:149,t:"Il m'est difficile d'être chaleureux et spontané."},{n:150,t:"Je me contrôle tellement bien que les autres croient que je n'ai pas d'émotions."},{n:151,t:"Les gens me trouvent coincé(e) sur le plan émotionnel."}]},{code:"us",name:"Idéaux Exigeants/Critique Excessive",domain:"E",domain_name:"Survigilance et Inhibition",items:[{n:152,t:"Je dois être le(la) meilleur(e) dans presque tout ce que je fais, je ne peux pas accepter d'être le(la) deuxième."},{n:153,t:"Je m'efforce de tout maintenir parfaitement en ordre."},{n:154,t:"Je dois apparaître sous mon meilleur aspect la plupart du temps."},{n:155,t:"Je m'efforce de faire de mon mieux ; je ne peux pas me contenter d'être « assez bien »."},{n:156,t:"J'ai tant de choses à faire qu'il ne me reste presque pas de temps pour me détendre vraiment."},{n:157,t:"Presque rien de ce que je fais n'est assez bien, je pourrais toujours faire mieux."},{n:158,t:"Je dois faire face à toutes mes responsabilités."},{n:159,t:"Je ressens une pression constante qui me force à faire les choses et à les réussir."},{n:160,t:"Mes relations souffrent de ce que je m'impose trop de choses."},{n:161,t:"Je m'impose une telle pression pour bien faire que ma santé en souffre."},{n:162,t:"Souvent je sacrifie plaisir et bonheur pour atteindre mes idéaux."},{n:163,t:"Lorsque je fais une erreur, je mérite une critique sévère."},{n:164,t:"Je ne peux pas accepter de me dégager aisément d'une situation difficile ou de présenter des excuses pour mes erreurs."},{n:165,t:"Je suis quelqu'un de très compétitif."},{n:166,t:"J'attache beaucoup d'importance à l'argent ou au statut social."},{n:167,t:"Je tiens toujours à être le meilleur dans ce que j'accomplis."}]},{code:"et",name:"Droits Personnels Exagérés/Grandeur",domain:"C",domain_name:"Manque de Limites",items:[{n:168,t:"Lorsque j'attends quelque chose des autres, j'ai beaucoup de difficulté à accepter un refus."},{n:169,t:"Je me mets souvent en colère ou je m'irrite quand je ne peux pas avoir ce que je veux."},{n:170,t:"Je suis quelqu'un de spécial et je ne devrais pas avoir à accepter les restrictions auxquelles les autres doivent se soumettre."},{n:171,t:"Je déteste être contraint(e) ou qu'on m'empêche de faire ce que je veux."},{n:172,t:"Je crois que je n'ai pas à suivre les règles et les conventions comme les autres."},{n:173,t:"J'ai le sentiment que j'ai beaucoup plus à offrir que les autres."},{n:174,t:"Habituellement, je fais passer mes besoins avant ceux des autres."},{n:175,t:"Je remarque souvent que l'importance accordée à mes priorités personnelles ne me laisse plus de temps pour les amis ou la famille."},{n:176,t:"Les autres me disent souvent que je contrôle trop la façon dont les choses sont faites."},{n:177,t:"Je suis très irrité lorsque les autres ne font pas ce que je leur demande."},{n:178,t:"Je ne supporte pas que les autres me disent ce que je dois faire."}]},{code:"is",name:"Contrôle de Soi/Autodiscipline Insuffisants",domain:"C",domain_name:"Manque de Limites",items:[{n:179,t:"J'ai beaucoup de difficultés à m'arrêter de boire, de fumer, de trop manger ou à cesser d'autres comportements problématiques."},{n:180,t:"Il ne me semble pas possible de me discipliner pour terminer des tâches routinières ou ennuyeuses."},{n:181,t:"Souvent, je me laisse aller à mes impulsions ou à exprimer des émotions qui me créent des difficultés ou blessent les autres."},{n:182,t:"Si je ne peux pas atteindre un but, je suis facilement frustré(e) et j'abandonne."},{n:183,t:"Il m'est très difficile de sacrifier une gratification immédiate pour mener à bien un projet à long terme."},{n:184,t:"Quand je me mets en colère, il est fréquent que je ne puisse pas du tout me contrôler."},{n:185,t:"J'ai tendance à abuser de certaines choses, même si je sais que c'est mauvais pour moi."},{n:186,t:"Je m'ennuie très facilement."},{n:187,t:"Quand les tâches deviennent difficiles, je ne peux souvent pas persévérer pour les terminer."},{n:188,t:"Je ne peux pas me concentrer longtemps sur quoi que ce soit."},{n:189,t:"Je ne peux pas me forcer à faire des choses qui ne me plaisent pas même quand je sais que c'est pour mon bien."},{n:190,t:"Je me mets en colère à la moindre offense."},{n:191,t:"J'ai rarement été capable de tenir mes engagements."},{n:192,t:"Je ne peux presque jamais m'empêcher de montrer aux gens mes véritables sentiments, même si cela doit me coûter cher."},{n:193,t:"J'agis souvent impulsivement et je le regrette plus tard."}]},{code:"as",name:"Recherche d'Approbation et de Reconnaissance",domain:"D",domain_name:"Orientation vers les Autres",items:[{n:194,t:"Il m'est important d'être aimé par presque tous ceux que je connais."},{n:195,t:"Je modifie mon comportement en fonction des gens avec qui je me trouve, afin qu'ils puissent m'aimer davantage."},{n:196,t:"Je fais tout mon possible pour m'adapter."},{n:197,t:"Mon estime personnelle est principalement fondée sur la façon dont les autres me voient."},{n:198,t:"Posséder de l'argent et connaître des gens importants sont des choses qui me donnent de la valeur."},{n:199,t:"Je consacre beaucoup de temps à soigner mon apparence afin de gagner l'estime des autres."},{n:200,t:"Mes réussites ont plus de valeur à mes yeux si les autres les remarquent."},{n:201,t:"Je suis à ce point soucieux de m'adapter aux autres qu'il m'arrive de ne plus savoir qui je suis."},{n:202,t:"Je trouve difficile de me fixer des objectifs propres, sans prendre en compte ce que les autres vont penser de mes choix."},{n:203,t:"Lorsque je considère les décisions que j'ai prises dans ma vie, je réalise que la plupart d'entre elles reposaient sur le désir d'obtenir l'approbation des autres."},{n:204,t:"Même si je n'aime pas une personne, je tiens malgré tout à ce qu'elle m'aime."},{n:205,t:"À moins d'obtenir beaucoup d'attention des autres, je me sens peu important."},{n:206,t:"Si j'interviens lors d'une réunion ou si on me présente dans un groupe, je cherche à être reconnu(e) et admiré(e)."},{n:207,t:"Lorsqu'on me fait beaucoup de compliments et d'éloges, je me sens une personne de valeur."}]},{code:"np",name:"Négativité/Pessimisme",domain:"E",domain_name:"Survigilance et Inhibition",items:[{n:208,t:"Même lorsque tout va bien, j'ai l'impression que ce ne sera que temporaire."},{n:209,t:"S'il se produit quelque chose de bien, j'ai peur qu'il n'arrive ensuite quelque chose de mauvais."},{n:210,t:"On n'est jamais assez prudent ; il peut toujours se produire quelque chose de mauvais."},{n:211,t:"Même si je travaille beaucoup, j'ai peur de me retrouver un jour sans le sou."},{n:212,t:"J'ai peur qu'une mauvaise décision ne puisse conduire à un désastre."},{n:213,t:"Je me tourmente souvent pour des décisions mineures, car les conséquences d'une erreur m'apparaissent tellement graves."},{n:214,t:"Je préfère considérer que les choses ne vont pas aller comme je le veux, car ainsi je ne serai pas déçu si ça se passe mal."},{n:215,t:"Je pense plutôt aux aspects négatifs de la vie et des évènements qu'aux côtés positifs."},{n:216,t:"J'ai tendance à être pessimiste."},{n:217,t:"Mes proches considèrent que je me fais trop de soucis."},{n:218,t:"Si les gens s'enthousiasment trop, je me sens mal et j'éprouve le besoin de les prévenir de ce qui pourrait mal se passer."}]},{code:"pu",name:"Punition",domain:"E",domain_name:"Survigilance et Inhibition",items:[{n:219,t:"Si je fais une erreur, je mérite d'être puni(e)."},{n:220,t:"Si je ne donne pas le meilleur de moi-même, je dois m'attendre à échouer."},{n:221,t:"Je n'ai aucune excuse si je fais une erreur."},{n:222,t:"Les gens qui ne font pas leur part de travail à fond devraient être punis d'une manière ou d'une autre."},{n:223,t:"La plupart du temps, je n'accepte pas les excuses des autres : ils n'ont pas pris leurs responsabilités et ils en paient les conséquences."},{n:224,t:"Si je ne fais pas mon travail, je devrai en subir les conséquences."},{n:225,t:"Je pense souvent à mes erreurs passées et je me mets en colère contre moi-même."},{n:226,t:"Lorsque les gens font quelque chose de mal, j'ai du mal à appliquer la phrase: «pardonnez et oubliez»."},{n:227,t:"Je garde de la rancune envers les gens, même s'ils se sont excusés."},{n:228,t:"Je me sens énervé à l'idée que quelqu'un s'est tiré trop facilement d'un mauvais pas."},{n:229,t:"Je me mets en colère lorsque des gens se trouvent des excuses, ou lorsqu'ils accusent les autres pour des problèmes dont ils sont eux-mêmes responsables."},{n:230,t:"Peu importe les raisons, quand je fais une erreur, je devrais en payer le prix."},{n:231,t:"Je m'en veux énormément lorsque je bousille quelque chose."},{n:232,t:"Je suis quelqu'un de mauvais qui mérite d'être puni."}]}];
+
+const DOMAIN_ORDER=["A","B","C","D","E"];
+const DOMAIN_LABELS={A:"Séparation et Rejet",B:"Manque d'Autonomie et de Performance",C:"Manque de Limites",D:"Orientation vers les Autres",E:"Survigilance et Inhibition"};
+const DOMAIN_COLORS={A:"var(--domain-a)",B:"var(--domain-b)",C:"var(--domain-c)",D:"var(--domain-d)",E:"var(--domain-e)"};
+const DOMAIN_HEX={A:"#b8453a",B:"#c87d2a",C:"#3a6fa8",D:"#3a8a5c",E:"#7a4a9a"};
+const SCHEMA_BY_DOMAIN={A:["ed","ab","ma","ds","si"],B:["di","vu","eu","fa"],C:["et","is"],D:["sb","ss","as"],E:["np","ei","us","pu"]};
+const ORDERED=DOMAIN_ORDER.flatMap(d=>SCHEMA_BY_DOMAIN[d]);
+
+// ================================================================
+// STATE
+// ================================================================
+let answers = {};
+let currentIdx = 0;
+
+function getAnsweredCount() { return Object.keys(answers).length; }
+
+function computeScores() {
+  const scores = {};
+  SCHEMAS.forEach(s => {
+    const vals = s.items.map(it => answers[it.n]).filter(v => v !== undefined);
+    const total = vals.reduce((a,b) => a+b, 0);
+    scores[s.code] = { total, count: vals.length, mean: vals.length > 0 ? total / vals.length : 0 };
+  });
+  return scores;
+}
+
+// ================================================================
+// SCREENS
+// ================================================================
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ================================================================
+// INTRO
+// ================================================================
+document.getElementById('patientDate').value = new Date().toISOString().split('T')[0];
+
+function startQuestionnaire() {
+  showScreen('questionnaire');
+  renderSchemaNav();
+  renderSchema(0);
+  updateGlobal();
+}
+
+// ================================================================
+// QUESTIONNAIRE
+// ================================================================
+function renderSchemaNav() {
+  const nav = document.getElementById('schemaNav');
+  nav.innerHTML = SCHEMAS.map((s, i) => {
+    const done = s.items.every(it => answers[it.n] !== undefined);
+    const partial = s.items.some(it => answers[it.n] !== undefined);
+    const cls = i === currentIdx ? 'active' : done ? 'done' : '';
+    return `<button class="schema-tab ${cls}" style="--tab-color:${DOMAIN_HEX[s.domain]}" onclick="goToSchema(${i})">${s.code.toUpperCase()}</button>`;
+  }).join('');
+  // scroll active into view
+  setTimeout(() => {
+    const active = nav.querySelector('.active');
+    if (active) active.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+  }, 50);
+}
+
+function renderSchema(idx) {
+  currentIdx = idx;
+  const s = SCHEMAS[idx];
+  const answered = s.items.filter(it => answers[it.n] !== undefined).length;
+
+  document.getElementById('schemaHeader').innerHTML = `
+    <div class="domain-label" style="color:${DOMAIN_HEX[s.domain]}">${s.domain}. ${s.domain_name}</div>
+    <div class="schema-name">${s.name}<span class="code">(${s.code.toUpperCase()})</span></div>
+    <div class="schema-progress">${answered} / ${s.items.length} items</div>
+  `;
+  document.getElementById('schemaHeader').style.setProperty('--domain-color', DOMAIN_HEX[s.domain]);
+
+  const container = document.getElementById('questionsContainer');
+  container.innerHTML = s.items.map(it => {
+    const val = answers[it.n];
+    const cls = val !== undefined ? 'answered' : '';
+    return `<div class="question ${cls}" id="q${it.n}">
+      <div class="question-top">
+        <span class="question-num">${it.n}</span>
+        <span class="question-text">${it.t}</span>
+      </div>
+      <div class="likert">
+        ${[1,2,3,4,5,6].map(v => `<button class="likert-btn ${val===v?'selected':''}" onclick="answer(${it.n},${v})" title="${['','Complètement faux','Le plus souvent faux','Plutôt vrai que faux','Assez vrai','Le plus souvent vrai','Me décrit parfaitement'][v]}">${v}</button>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+
+  renderNav();
+  renderSchemaNav();
+}
+
+function answer(itemNum, value) {
+  answers[itemNum] = value;
+  // Update just this question's UI
+  const q = document.getElementById('q' + itemNum);
+  if (q) {
+    q.classList.add('answered');
+    q.querySelectorAll('.likert-btn').forEach(btn => {
+      const v = parseInt(btn.textContent);
+      btn.classList.toggle('selected', v === value);
+    });
+    q.querySelector('.question-num').style.background = 'var(--accent)';
+    q.querySelector('.question-num').style.color = 'white';
+  }
+  updateGlobal();
+  renderSchemaNav();
+  // Update schema header count
+  const s = SCHEMAS[currentIdx];
+  const answered = s.items.filter(it => answers[it.n] !== undefined).length;
+  const prog = document.querySelector('.schema-progress');
+  if (prog) prog.textContent = `${answered} / ${s.items.length} items`;
+
+  // Auto-advance to next unanswered
+  const nextUnanswered = s.items.find(it => answers[it.n] === undefined && it.n > itemNum);
+  if (nextUnanswered) {
+    const el = document.getElementById('q' + nextUnanswered.n);
+    if (el) setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'center' }), 150);
+  }
+}
+
+function updateGlobal() {
+  const count = getAnsweredCount();
+  document.getElementById('globalCount').textContent = `${count} / 232`;
+  document.getElementById('progressFill').style.width = `${(count/232)*100}%`;
+  document.getElementById('partialLink').style.display = count > 0 && count < 232 ? 'block' : 'none';
+}
+
+function renderNav() {
+  const s = SCHEMAS[currentIdx];
+  const complete = s.items.every(it => answers[it.n] !== undefined);
+  const isFirst = currentIdx === 0;
+  const isLast = currentIdx === SCHEMAS.length - 1;
+  const total = getAnsweredCount();
+
+  let html = '';
+  if (!isFirst) html += `<button class="btn-secondary" onclick="goToSchema(${currentIdx-1})">Précédent</button>`;
+  if (!isLast) {
+    html += `<button class="btn-primary" onclick="goToSchema(${currentIdx+1})">${complete ? 'Suivant' : 'Suivant'}</button>`;
+  } else {
+    const label = total === 232 ? 'Voir les résultats' : `Résultats (${total}/232)`;
+    html += `<button class="btn-primary" onclick="showResults()" style="${total===232?'background:#3a8a5c;box-shadow:0 2px 12px rgba(58,138,92,0.3)':'background:#c87d2a;box-shadow:0 2px 12px rgba(200,125,42,0.3)'}">${label}</button>`;
+  }
+  document.getElementById('navRow').innerHTML = html;
+}
+
+function goToSchema(idx) {
+  if (idx < 0 || idx >= SCHEMAS.length) return;
+  renderSchema(idx);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ================================================================
+// RESULTS
+// ================================================================
+function showResults() {
+  showScreen('results');
+  const scores = computeScores();
+  const name = document.getElementById('patientName').value;
+  const date = document.getElementById('patientDate').value;
+
+  let html = `
+    <div class="results-header">
+      <h2>Résultats YSQ-L3</h2>
+      ${name ? `<div class="results-meta">${name} — ${date || new Date().toLocaleDateString('fr-FR')}</div>` : ''}
+    </div>
+    <div class="legend-row">
+      ${DOMAIN_ORDER.map(d => `<span class="legend-item"><span class="legend-dot" style="background:${DOMAIN_HEX[d]}"></span>${d}. ${DOMAIN_LABELS[d]}</span>`).join('')}
+    </div>
+    <div class="result-card">
+      <h3>Profil radar</h3>
+      <div class="chart-container">${buildRadarSVG(scores)}</div>
+    </div>
+    <div class="result-card">
+      <h3>Scores moyens par schéma</h3>
+      <div class="chart-container">${buildBarSVG(scores)}</div>
+    </div>
+    <div class="result-card">
+      <h3>Synthèse par domaine</h3>
+      ${buildDomainSummary(scores)}
+    </div>
+    <div class="result-card">
+      <h3>Détail par schéma</h3>
+      <div style="overflow-x:auto">${buildDetailTable(scores)}</div>
+    </div>
+    <div class="pdf-section">
+      <button class="btn-primary" onclick="exportPDF()" style="width:auto;display:inline-flex;padding:14px 36px">
+        Télécharger en PDF
+      </button>
+      <div class="pdf-hint">Ouvre la fenêtre d'impression — enregistrez en PDF</div>
+    </div>
+  `;
+  document.getElementById('resultsContent').innerHTML = html;
+}
+
+function backToQuestionnaire() {
+  showScreen('questionnaire');
+  renderSchema(currentIdx);
+}
+
+// ================================================================
+// SVG CHARTS
+// ================================================================
+function buildRadarSVG(scores) {
+  const size = 480, cx = size/2, cy = size/2, maxR = 175;
+  const n = ORDERED.length;
+  const step = (2*Math.PI)/n;
+
+  let svg = `<svg viewBox="0 0 ${size} ${size}" width="100%" style="max-width:${size}px" xmlns="http://www.w3.org/2000/svg">`;
+
+  // Grid
+  [1,2,3,4,5,6].forEach(level => {
+    const r = (level/6)*maxR;
+    let pts = [];
+    for (let i=0;i<n;i++) {
+      const a = -Math.PI/2 + i*step;
+      pts.push(`${cx+r*Math.cos(a)},${cy+r*Math.sin(a)}`);
+    }
+    svg += `<polygon points="${pts.join(' ')}" fill="none" stroke="#e4dfd8" stroke-width="0.7"/>`;
+    if (level%2===0) svg += `<text x="${cx+5}" y="${cy-r+4}" font-size="9" fill="#a8a098" font-family="DM Sans,sans-serif">${level}</text>`;
+  });
+
+  // Axes
+  for (let i=0;i<n;i++) {
+    const a = -Math.PI/2 + i*step;
+    svg += `<line x1="${cx}" y1="${cy}" x2="${cx+maxR*Math.cos(a)}" y2="${cy+maxR*Math.sin(a)}" stroke="#ede9e3" stroke-width="0.5"/>`;
+  }
+
+  // Data polygon
+  let dataPts = [];
+  let dots = '';
+  for (let i=0;i<n;i++) {
+    const code = ORDERED[i];
+    const val = scores[code]?.mean||0;
+    const r = (val/6)*maxR;
+    const a = -Math.PI/2 + i*step;
+    const x = cx+r*Math.cos(a), y = cy+r*Math.sin(a);
+    dataPts.push(`${x},${y}`);
+    const s = SCHEMAS.find(x=>x.code===code);
+    dots += `<circle cx="${x}" cy="${y}" r="3.5" fill="${DOMAIN_HEX[s.domain]}" stroke="#fffdf9" stroke-width="1.5"/>`;
+  }
+  svg += `<polygon points="${dataPts.join(' ')}" fill="rgba(61,107,94,0.12)" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round"/>`;
+  svg += dots;
+
+  // Labels
+  for (let i=0;i<n;i++) {
+    const code = ORDERED[i];
+    const s = SCHEMAS.find(x=>x.code===code);
+    const a = -Math.PI/2 + i*step;
+    const lx = cx+(maxR+26)*Math.cos(a), ly = cy+(maxR+26)*Math.sin(a);
+    const anchor = Math.abs(Math.cos(a))<0.15?'middle':Math.cos(a)>0?'start':'end';
+    const label = s.name.length > 18 ? s.code.toUpperCase() : s.name;
+    svg += `<text x="${lx}" y="${ly}" font-size="9" fill="${DOMAIN_HEX[s.domain]}" text-anchor="${anchor}" dominant-baseline="middle" font-weight="600" font-family="DM Sans,sans-serif">${label}</text>`;
+  }
+
+  svg += '</svg>';
+  return svg;
+}
+
+function buildBarSVG(scores) {
+  const w=620, h=280;
+  const ml=36, mr=16, mt=16, mb=60;
+  const pw=w-ml-mr, ph=h-mt-mb;
+  const n=ORDERED.length;
+  const bw=pw/n-3;
+
+  let svg = `<svg viewBox="0 0 ${w} ${h}" width="100%" style="max-width:${w}px" xmlns="http://www.w3.org/2000/svg">`;
+
+  // Y axis
+  for(let v=0;v<=6;v+=1){
+    const y=mt+ph-(v/6)*ph;
+    svg+=`<line x1="${ml}" y1="${y}" x2="${ml+pw}" y2="${y}" stroke="${v===0?'#d5d0c8':'#ede9e3'}" stroke-width="0.5"/>`;
+    if(v%2===0) svg+=`<text x="${ml-8}" y="${y+3}" font-size="10" fill="#a8a098" text-anchor="end" font-family="DM Sans,sans-serif">${v}</text>`;
+  }
+
+  // Bars
+  ORDERED.forEach((code,i) => {
+    const val=scores[code]?.mean||0;
+    const s=SCHEMAS.find(x=>x.code===code);
+    const bh=(val/6)*ph;
+    const x=ml+i*(pw/n)+1.5;
+    const y=mt+ph-bh;
+    svg+=`<rect x="${x}" y="${y}" width="${bw}" height="${bh}" fill="${DOMAIN_HEX[s.domain]}" rx="3" opacity="0.85"/>`;
+    if(val>0) svg+=`<text x="${x+bw/2}" y="${y-5}" font-size="9" text-anchor="middle" fill="#2a2520" font-weight="600" font-family="DM Sans,sans-serif">${val.toFixed(1)}</text>`;
+    svg+=`<text x="${x+bw/2}" y="${mt+ph+14}" font-size="8" text-anchor="end" fill="#7a7068" font-weight="600" font-family="DM Sans,sans-serif" transform="rotate(-45,${x+bw/2},${mt+ph+14})">${s.code.toUpperCase()}</text>`;
+  });
+
+  svg+='</svg>';
+  return svg;
+}
+
+function buildDomainSummary(scores) {
+  return DOMAIN_ORDER.map(d => {
+    const schemas = SCHEMA_BY_DOMAIN[d];
+    const vals = schemas.map(c => scores[c]?.mean||0);
+    const mean = vals.reduce((a,b)=>a+b,0)/vals.length;
+    const chips = schemas.map(code => {
+      const s = SCHEMAS.find(x=>x.code===code);
+      const m = scores[code]?.mean||0;
+      const cls = m>=4?'high':m>=3?'mid':'low';
+      return `<span class="schema-chip ${cls}">${s.code.toUpperCase()} ${m.toFixed(1)}</span>`;
+    }).join('');
+    return `<div class="domain-block">
+      <div class="domain-row">
+        <span class="domain-name" style="color:${DOMAIN_HEX[d]}">${d}. ${DOMAIN_LABELS[d]}</span>
+        <span class="domain-mean">${mean.toFixed(2)}</span>
+      </div>
+      <div class="domain-bar"><div class="domain-bar-fill" style="width:${(mean/6)*100}%;background:${DOMAIN_HEX[d]}"></div></div>
+      <div class="domain-schemas">${chips}</div>
+    </div>`;
+  }).join('');
+}
+
+function buildDetailTable(scores) {
+  let rows = DOMAIN_ORDER.flatMap(d =>
+    SCHEMA_BY_DOMAIN[d].map(code => {
+      const s = SCHEMAS.find(x=>x.code===code);
+      const sc = scores[code];
+      const m = sc?.mean||0;
+      const cls = m>=4?'high-row':m>=3?'mid-row':'';
+      return `<tr class="${cls}">
+        <td class="code" style="color:${DOMAIN_HEX[d]}">${s.code.toUpperCase()}</td>
+        <td>${s.name}</td>
+        <td class="num" style="font-weight:600">${m.toFixed(2)}</td>
+        <td class="num">${sc?.total||0}</td>
+        <td class="num">${sc?.count||0}</td>
+      </tr>`;
+    })
+  ).join('');
+
+  return `<table class="detail-table">
+    <thead><tr><th>Code</th><th>Schéma</th><th class="num">Moy.</th><th class="num">Total</th><th class="num">Items</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+// ================================================================
+// PDF EXPORT
+// ================================================================
+function exportPDF() {
+  const scores = computeScores();
+  const name = document.getElementById('patientName').value;
+  const date = document.getElementById('patientDate').value;
+
+  const radarSVG = buildRadarSVG(scores);
+  const barSVG = buildBarSVG(scores);
+
+  let domainRows = DOMAIN_ORDER.map(d => {
+    const schemas = SCHEMA_BY_DOMAIN[d];
+    const vals = schemas.map(c=>scores[c]?.mean||0);
+    const mean = vals.reduce((a,b)=>a+b,0)/vals.length;
+    return `<tr><td style="padding:8px 12px;border:1px solid #e4dfd8;color:${DOMAIN_HEX[d]};font-weight:600">${d}. ${DOMAIN_LABELS[d]}</td><td style="padding:8px 12px;border:1px solid #e4dfd8;text-align:center;font-weight:600">${mean.toFixed(2)}</td></tr>`;
+  }).join('');
+
+  let schemaRows = DOMAIN_ORDER.flatMap(d =>
+    SCHEMA_BY_DOMAIN[d].map(code => {
+      const s = SCHEMAS.find(x=>x.code===code);
+      const sc = scores[code];
+      const m = sc?.mean||0;
+      const bg = m>=4?'background:#fef8f7;':m>=3?'background:#fefcf3;':'';
+      return `<tr style="${bg}"><td style="padding:5px 12px;border:1px solid #ede9e3;color:${DOMAIN_HEX[d]};font-weight:700">${s.code.toUpperCase()}</td><td style="padding:5px 12px;border:1px solid #ede9e3">${s.name}</td><td style="padding:5px 12px;border:1px solid #ede9e3;text-align:center;font-weight:600">${m.toFixed(2)}</td><td style="padding:5px 12px;border:1px solid #ede9e3;text-align:center">${sc?.total||0}</td><td style="padding:5px 12px;border:1px solid #ede9e3;text-align:center">${sc?.count||0}</td></tr>`;
+    })
+  ).join('');
+
+  const legend = DOMAIN_ORDER.map(d => `<span style="display:inline-flex;align-items:center;gap:4px;margin-right:14px"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:${DOMAIN_HEX[d]}"></span>${d}. ${DOMAIN_LABELS[d]}</span>`).join('');
+
+  const doc = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>YSQ-L3 — Résultats</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
+<style>
+@page { margin: 20mm 15mm; }
+@media print { .page-break { page-break-before: always; } }
+body { font-family: 'DM Sans', system-ui, sans-serif; color: #2a2520; max-width: 780px; margin: 0 auto; padding: 24px; line-height: 1.5; }
+h1 { font-family: 'Fraunces', Georgia, serif; font-size: 22px; color: #2a2520; border-bottom: 2px solid #3d6b5e; padding-bottom: 8px; margin-bottom: 4px; }
+h2 { font-family: 'Fraunces', Georgia, serif; font-size: 16px; color: #2a2520; margin-top: 28px; margin-bottom: 12px; }
+table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 13px; }
+th { background: #f8f5f0; padding: 7px 12px; border: 1px solid #e4dfd8; text-align: left; font-weight: 600; font-size: 12px; }
+.meta { color: #7a7068; font-size: 13px; margin-bottom: 20px; }
+.legend { font-size: 11px; color: #7a7068; margin: 12px 0 20px; line-height: 2; }
+.note { font-size: 11px; color: #a8a098; margin-top: 24px; font-style: italic; line-height: 1.6; }
+svg { max-width: 100%; height: auto; }
+</style></head><body>
+<h1>Questionnaire des Schémas de Young — YSQ-L3</h1>
+<div class="meta">
+${name?`<strong>Nom :</strong> ${name}<br>`:''}
+${date?`<strong>Date :</strong> ${date}<br>`:''}
+<strong>Généré le :</strong> ${new Date().toLocaleDateString('fr-FR')}
+</div>
+<div class="legend">${legend}</div>
+<h2>Profil radar — Scores moyens par schéma</h2>
+<div style="text-align:center">${radarSVG}</div>
+<div class="page-break"></div>
+<h2>Scores moyens par schéma</h2>
+<div style="text-align:center">${barSVG}</div>
+<h2>Synthèse par domaine</h2>
+<table><tr><th>Domaine</th><th style="text-align:center">Moyenne</th></tr>${domainRows}</table>
+<h2>Détail par schéma</h2>
+<table><tr><th>Code</th><th>Schéma</th><th style="text-align:center">Moyenne</th><th style="text-align:center">Total</th><th style="text-align:center">Items</th></tr>${schemaRows}</table>
+<p class="note">YSQ-L3 — Jeffrey Young, Ph.D. Traduction par Pierre Cousineau et Bernard Pascal.<br>Cotation : 1 (Complètement faux) à 6 (Me décrit parfaitement). Schémas avec moyenne ≥ 4 surlignés en rouge, ≥ 3 en jaune.</p>
+</body></html>`;
+
+  const blob = new Blob([doc], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const w = window.open(url, '_blank');
+  if (w) {
+    w.onload = () => setTimeout(() => w.print(), 600);
+  }
+}
+</script>
+</body>
+</html>

@@ -11,6 +11,7 @@ const navItems = [
   { label: "Carte", href: "/carte" },
   { label: "Cascade", href: "/cascade" },
   { label: "Fiches", href: "/fiches" },
+  { label: "Outils", href: "/outils" },
 ];
 
 export function Navbar() {

@@ -29,6 +29,13 @@ const sections = [
     href: "/fiches",
     accent: "bg-emerald-50 border-emerald-200 hover:border-emerald-300",
   },
+  {
+    title: "Outils & Questionnaires",
+    description:
+      "Questionnaires interactifs (YSQ-L3, DES-II) et diagramme de conceptualisation de cas à remplir et télécharger en PDF.",
+    href: "/outils",
+    accent: "bg-amber-50 border-amber-200 hover:border-amber-300",
+  },
 ];
 
 export default function Home() {
@@ -52,7 +59,7 @@ export default function Home() {
       </section>
 
       {/* Section cards */}
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl w-full">
+      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl w-full">
         {sections.map((section) => (
           <Link key={section.href} href={section.href} className="group">
             <Card
