@@ -41,13 +41,21 @@ const emptyData: DiagramData = {
   comportements: '',
 };
 
-// Modes coping groupés par style
-const copingModes = modes.filter((m) => m.category === 'coping-dysfonctionnel');
-const copingGroups = [
-  { label: 'Évitement', styleId: 'evitement', color: '#7C3AED' },
-  { label: 'Soumission', styleId: 'soumission', color: '#2563EB' },
-  { label: 'Compensation', styleId: 'compensation', color: '#EA580C' },
+// Tous les modes groupés par catégorie
+const modeGroups = [
+  { label: 'Modes Enfant', category: 'enfant', color: '#2563EB' },
+  { label: 'Modes Coping — Évitement', category: 'coping-dysfonctionnel', styleId: 'evitement', color: '#7C3AED' },
+  { label: 'Modes Coping — Soumission', category: 'coping-dysfonctionnel', styleId: 'soumission', color: '#6366F1' },
+  { label: 'Modes Coping — Compensation', category: 'coping-dysfonctionnel', styleId: 'compensation', color: '#EA580C' },
+  { label: 'Modes Parent Dysfonctionnel', category: 'parent-dysfonctionnel', color: '#DC2626' },
+  { label: 'Mode Adulte Sain', category: 'sain', color: '#16A34A' },
 ] as const;
+
+const getModesByGroup = (g: typeof modeGroups[number]) =>
+  modes.filter((m) =>
+    m.category === g.category &&
+    (!('styleId' in g) || !g.styleId || m.copingStyleId === g.styleId)
+  );
 
 // Schémas groupés par domaine
 const domainColors: Record<string, string> = {
@@ -517,12 +525,15 @@ function ModeSelector({
         {selectedModes.length > 0 && (
           <div className="flex flex-wrap gap-1 mb-1.5">
             {selectedModes.map((m) => {
-              const group = copingGroups.find((g) => g.styleId === m!.copingStyleId);
+              const grp = modeGroups.find((g) =>
+                g.category === m!.category &&
+                (!('styleId' in g) || !g.styleId || m!.copingStyleId === g.styleId)
+              );
               return (
                 <span
                   key={m!.id}
                   className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md text-[10px] font-medium text-white cursor-pointer hover:opacity-80"
-                  style={{ backgroundColor: group?.color || '#64748b' }}
+                  style={{ backgroundColor: grp?.color || '#64748b' }}
                   onClick={() => onToggle(m!.id)}
                 >
                   {m!.name}
@@ -544,10 +555,11 @@ function ModeSelector({
           {open && (
             <div className="fixed z-[100] bg-white border border-slate-200 rounded-lg shadow-xl max-h-72 overflow-y-auto"
               style={{ width: 'min(380px, 90vw)' }}>
-              {copingGroups.map((group) => {
-                const items = copingModes.filter((m) => m.copingStyleId === group.styleId);
+              {modeGroups.map((group) => {
+                const items = getModesByGroup(group);
+                if (items.length === 0) return null;
                 return (
-                  <div key={group.styleId}>
+                  <div key={group.label}>
                     <div className="px-2 py-1 text-[10px] font-bold uppercase tracking-wide sticky top-0 bg-slate-50 border-b border-slate-100"
                       style={{ color: group.color }}>
                       {group.label}
