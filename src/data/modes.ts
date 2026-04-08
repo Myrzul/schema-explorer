@@ -69,7 +69,7 @@ export const modes: SchemaMode[] = [
     therapeuticGoal: "Renforcer et développer",
   },
 
-  // ========== Modes Coping Dysfonctionnel ==========
+  // ========== Modes Coping Dysfonctionnel — Évitement ==========
   {
     id: 'protecteur-detache',
     name: 'Protecteur Détaché',
@@ -92,6 +92,60 @@ export const modes: SchemaMode[] = [
       { question: 'Que ressentez-vous envers moi ?', response: '"Rien"' },
     ],
   },
+  {
+    id: 'protecteur-evitant',
+    name: 'Protecteur Évitant',
+    category: 'coping-dysfonctionnel',
+    copingStyleId: 'evitement',
+    affect: 'Distant, isolé, indépendant à l\'excès',
+    description:
+      "Se caractérise par un isolement social, une indépendance excessive et une déconnexion des autres pour éviter toute activation de schéma.",
+    clinicalNotes:
+      "Retrait social actif, à distinguer du Protecteur Détaché (retrait psychologique). Le patient évite physiquement les situations plutôt que de se couper émotionnellement.",
+    schemaIds: ['isolement-social', 'mefiance-abus', 'imperfection-honte'],
+    therapeuticGoal: 'Remplacer — exposition progressive aux relations',
+  },
+  {
+    id: 'auto-stimulateur',
+    name: 'Auto-Stimulateur',
+    category: 'coping-dysfonctionnel',
+    copingStyleId: 'evitement',
+    affect: 'Agité, en recherche de sensations, compulsif',
+    description:
+      "Recherche compulsivement l'excitation ou la distraction pour combler un sentiment de vide ou d'ennui (achats compulsifs, conduite risquée, substances excitantes, pornographie).",
+    clinicalNotes:
+      "Mécanisme de fuite par sur-stimulation. Le patient ne fuit pas les gens mais les émotions, en les noyant sous l'excitation.",
+    schemaIds: ['controle-soi-insuffisant', 'surcontrole-emotionnel'],
+    therapeuticGoal: 'Modérer — identifier le vide sous-jacent',
+  },
+  {
+    id: 'auto-tranquilliseur',
+    name: 'Auto-Tranquilliseur',
+    category: 'coping-dysfonctionnel',
+    copingStyleId: 'evitement',
+    affect: 'Engourdi, apaisé artificiellement, passif',
+    description:
+      "Utilise des activités compulsives pour distraire l'attention et s'apaiser : addictions sédatives (alcool, cannabis), boulimie, scarifications, ou absorption excessive dans internet/TV.",
+    clinicalNotes:
+      "À distinguer de l'Auto-Stimulateur : ici le but est l'apaisement, pas l'excitation. Les deux fuient la douleur mais par des voies opposées.",
+    schemaIds: ['controle-soi-insuffisant', 'manque-affectif'],
+    therapeuticGoal: 'Modérer — développer des stratégies d\'apaisement saines',
+  },
+  {
+    id: 'protecteur-colereux',
+    name: 'Protecteur en Colère',
+    category: 'coping-dysfonctionnel',
+    copingStyleId: 'evitement',
+    affect: 'Colère défensive, irritable, menaçant',
+    description:
+      "Utilise un « écran de colère » pour tenir les autres à distance et se protéger ainsi des émotions négatives ou de ceux perçus comme menaçants.",
+    clinicalNotes:
+      "À distinguer de l'Enfant Coléreux (colère légitime liée à des besoins non comblés). Ici la colère est stratégique et défensive, pas une expression de souffrance.",
+    schemaIds: ['mefiance-abus', 'abandon-instabilite'],
+    therapeuticGoal: 'Modérer — accéder à la vulnérabilité sous la colère',
+  },
+
+  // ========== Modes Coping Dysfonctionnel — Soumission ==========
   {
     id: 'soumis-obeissant',
     name: 'Soumis Obéissant',
@@ -125,6 +179,98 @@ export const modes: SchemaMode[] = [
     therapeuticGoal: 'Modérer — confrontation empathique',
   },
 
+  {
+    id: 'hypercontroleur-perfectionniste',
+    name: 'Hypercontrôleur Perfectionniste',
+    category: 'coping-dysfonctionnel',
+    copingStyleId: 'compensation',
+    affect: 'Tendu, rigide, contrôlant, anxieux',
+    description:
+      "Tente de contrôler tout ce qui pourrait amener une critique ou une malchance. Inclut des variantes : Hypercontrôleur Alimentaire (restrictions pour la minceur) et Hypercontrôleur Obsessionnel-Compulsif (rituels de vérification, rangement).",
+    clinicalNotes:
+      "Mécanisme de compensation face à la peur de l'imperfection et du jugement. Le contrôle est la tentative de prévenir toute activation du schéma.",
+    schemaIds: ['ideaux-exigeants', 'negativite-pessimisme', 'punition'],
+    therapeuticGoal: 'Modérer — assouplir les standards',
+  },
+  {
+    id: 'hypercontroleur-soupconneux',
+    name: 'Hypercontrôleur Soupçonneux',
+    category: 'coping-dysfonctionnel',
+    copingStyleId: 'compensation',
+    affect: 'Méfiant, vigilant, suspicieux',
+    description:
+      "Cherche activement des indices de mauvaises intentions chez autrui pour contrôler une menace perçue.",
+    clinicalNotes:
+      "Compensation directe du schéma Méfiance/Abus : plutôt que de subir, le patient tente de détecter et prévenir l'agression.",
+    schemaIds: ['mefiance-abus'],
+    therapeuticGoal: 'Modérer — réalité-tester les suspicions',
+  },
+  {
+    id: 'agresseur-brutal',
+    name: 'Agresseur Brutal',
+    category: 'coping-dysfonctionnel',
+    copingStyleId: 'compensation',
+    affect: 'Intimidant, violent, dominateur',
+    description:
+      "Utilise l'intimidation, la menace ou l'agression (physique, verbale, sexuelle) pour dominer et obtenir ce qu'il veut.",
+    clinicalNotes:
+      "Mode fréquent dans le trouble antisocial. Compensation extrême : « je frappe avant d'être frappé ». Poser des limites fermes en thérapie.",
+    schemaIds: ['mefiance-abus', 'droits-exageres'],
+    therapeuticGoal: 'Poser des limites strictes — confrontation empathique',
+  },
+  {
+    id: 'manipulateur-escroc',
+    name: 'Manipulateur Escroc',
+    category: 'coping-dysfonctionnel',
+    copingStyleId: 'compensation',
+    affect: 'Rusé, calculateur, trompeur',
+    description:
+      "Escroque ou manipule de façon couverte pour éviter une sanction ou persécuter autrui.",
+    clinicalNotes:
+      "Mode typique du trouble antisocial. À la différence de l'Agresseur Brutal, la manipulation est indirecte et camouflée.",
+    schemaIds: ['mefiance-abus', 'droits-exageres'],
+    therapeuticGoal: 'Confronter — établir la transparence relationnelle',
+  },
+  {
+    id: 'predateur',
+    name: 'Prédateur',
+    category: 'coping-dysfonctionnel',
+    copingStyleId: 'compensation',
+    affect: 'Froid, impitoyable, calculé',
+    description:
+      "Agit de manière froide, impitoyable et calculée pour éliminer un obstacle ou une menace. Vision binaire du monde : proies et prédateurs.",
+    clinicalNotes:
+      "Mode le plus dangereux. Associé aux personnalités antisociales sévères et psychopathiques. Absence apparente d'empathie et de remords.",
+    schemaIds: ['mefiance-abus', 'droits-exageres'],
+    therapeuticGoal: 'Poser des limites absolues — confrontation directe',
+  },
+  {
+    id: 'chercheur-approbation',
+    name: "Chercheur d'Approbation et de Reconnaissance",
+    category: 'coping-dysfonctionnel',
+    copingStyleId: 'compensation',
+    affect: 'En quête d\'attention, extraverti, démonstratif',
+    description:
+      "Cherche l'attention par des comportements extravagants ou inappropriés pour compenser un sentiment de solitude.",
+    clinicalNotes:
+      "Compensation du manque affectif et de l'isolement social. Mode fréquent dans le trouble histrionique.",
+    schemaIds: ['recherche-approbation', 'manque-affectif', 'isolement-social'],
+    therapeuticGoal: 'Modérer — valider le besoin, réorienter l\'expression',
+  },
+  {
+    id: 'ruminateur',
+    name: 'Ruminateur',
+    category: 'coping-dysfonctionnel',
+    copingStyleId: 'compensation',
+    affect: 'Ressassant, inquiet, tourmenté',
+    description:
+      "Répétition improductive de pensées négatives (soucis, regrets, vengeance, remise en question) qui entretiennent la détresse émotionnelle.",
+    clinicalNotes:
+      "Souvent confondu avec la réflexion constructive. La rumination est circulaire et ne mène à aucune solution. Elle maintient le patient dans un mode cognitif qui évite le ressenti émotionnel.",
+    schemaIds: ['negativite-pessimisme', 'surcontrole-emotionnel'],
+    therapeuticGoal: 'Modérer — interrompre la boucle et rediriger vers le ressenti',
+  },
+
   // ========== Modes Parent Dysfonctionnel ==========
   {
     id: 'parent-punitif',
@@ -149,6 +295,19 @@ export const modes: SchemaMode[] = [
       "Associé aux familles perfectionnistes et rigides. La pression est interne et permanente.",
     schemaIds: ['surcontrole-emotionnel', 'ideaux-exigeants'],
     therapeuticGoal: 'Modérer significativement',
+  },
+
+  {
+    id: 'parent-culpabilisant',
+    name: 'Parent Culpabilisant / Humiliant / Violent',
+    category: 'parent-dysfonctionnel',
+    affect: 'Accusateur, humiliant, abusif',
+    description:
+      "Formes spécifiques du parent dysfonctionnel provoquant respectivement une culpabilité intense, de la honte ou une souffrance physique chez l'Enfant Vulnérable.",
+    clinicalNotes:
+      "Distinguer la variante dominante : culpabilisation (« tout est de ta faute »), humiliation (« tu es ridicule ») ou violence (menace physique internalisée). Chaque variante cible un schéma différent.",
+    schemaIds: ['imperfection-honte', 'punition', 'mefiance-abus'],
+    therapeuticGoal: "ÉLIMINER complètement",
   },
 
   // ========== Mode Adulte Sain ==========

@@ -14,7 +14,7 @@ type TabId = 'schemas' | 'modes' | 'troubles' | 'techniques';
 
 const tabs: { id: TabId; label: string; icon: React.ReactNode }[] = [
   { id: 'schemas', label: 'Schémas (18)', icon: <BookOpen className="w-4 h-4" /> },
-  { id: 'modes', label: 'Modes (10)', icon: <Brain className="w-4 h-4" /> },
+  { id: 'modes', label: 'Modes (22)', icon: <Brain className="w-4 h-4" /> },
   { id: 'troubles', label: 'Troubles TP (7)', icon: <Users className="w-4 h-4" /> },
   { id: 'techniques', label: 'Techniques (8)', icon: <Stethoscope className="w-4 h-4" /> },
 ];
