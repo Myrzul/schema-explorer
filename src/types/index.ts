@@ -20,7 +20,8 @@ export type DisorderId =
   | 'dependante'
   | 'obsessionnel-compulsif'
   | 'histrionique'
-  | 'antisociale';
+  | 'antisociale'
+  | 'evitante';
 
 export type RelationshipType =
   | 'belongs_to_domain'
@@ -108,6 +109,7 @@ export interface PersonalityDisorder {
   name: string;
   dominantSchemaIds: string[];
   dominantCopingStyle: string;
+  activeModeIds: string[];
   specificModes: DisorderSpecificMode[];
   modalDynamic: string;
   healthyAdultStatus: string;

@@ -15,7 +15,7 @@ type TabId = 'schemas' | 'modes' | 'troubles' | 'techniques';
 const tabs: { id: TabId; label: string; icon: React.ReactNode }[] = [
   { id: 'schemas', label: 'Schémas (18)', icon: <BookOpen className="w-4 h-4" /> },
   { id: 'modes', label: 'Modes (22)', icon: <Brain className="w-4 h-4" /> },
-  { id: 'troubles', label: 'Troubles TP (7)', icon: <Users className="w-4 h-4" /> },
+  { id: 'troubles', label: 'Troubles TP (8)', icon: <Users className="w-4 h-4" /> },
   { id: 'techniques', label: 'Techniques (8)', icon: <Stethoscope className="w-4 h-4" /> },
 ];
 
@@ -284,6 +284,27 @@ function DisorderCard({ disorder }: { disorder: PersonalityDisorder }) {
             })}
           </div>
         </div>
+
+        {disorder.activeModeIds.length > 0 && (
+          <div>
+            <h4 className="text-[11px] font-semibold uppercase text-slate-400 mb-1">Modes actifs</h4>
+            <div className="flex flex-wrap gap-1">
+              {disorder.activeModeIds.map((id) => {
+                const m = modes.find((mo) => mo.id === id);
+                const mc = m ? modeCategoryColors[m.category] : null;
+                return (
+                  <span
+                    key={id}
+                    className="text-[11px] px-2 py-0.5 rounded-full border"
+                    style={mc ? { backgroundColor: mc.bg, borderColor: mc.border, color: mc.text } : {}}
+                  >
+                    {m?.name ?? id}
+                  </span>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         <div>
           <h4 className="text-[11px] font-semibold uppercase text-slate-400 mb-1">Style de coping dominant</h4>
