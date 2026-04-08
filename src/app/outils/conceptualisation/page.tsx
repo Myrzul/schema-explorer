@@ -349,10 +349,10 @@ function DiagramBox({
 }) {
   return (
     <div
-      className="rounded-xl border-2 bg-white shadow-sm overflow-hidden"
+      className="rounded-xl border-2 bg-white shadow-sm"
       style={{ ...style, borderColor: color }}
     >
-      <div className="px-3 py-1.5" style={{ backgroundColor: `${color}10` }}>
+      <div className="px-3 py-1.5 rounded-t-[10px]" style={{ backgroundColor: `${color}10` }}>
         <h3 className="text-xs font-bold" style={{ color }}>{title}</h3>
       </div>
       <textarea
@@ -400,10 +400,10 @@ function SchemaSelector({
 
   return (
     <div
-      className="rounded-xl border-2 bg-white shadow-sm overflow-hidden"
+      className="rounded-xl border-2 bg-white shadow-sm"
       style={{ ...style, borderColor: color }}
     >
-      <div className="px-3 py-1.5" style={{ backgroundColor: `${color}10` }}>
+      <div className="px-3 py-1.5 rounded-t-[10px]" style={{ backgroundColor: `${color}10` }}>
         <h3 className="text-xs font-bold" style={{ color }}>Schémas :</h3>
       </div>
       <div className="px-2 py-1.5">
@@ -434,7 +434,8 @@ function SchemaSelector({
             <ChevronDown className={`w-3 h-3 transition-transform ${open ? 'rotate-180' : ''}`} />
           </button>
           {open && (
-            <div className="absolute z-50 left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg max-h-64 overflow-y-auto">
+            <div className="fixed z-[100] bg-white border border-slate-200 rounded-lg shadow-xl max-h-72 overflow-y-auto"
+              style={{ width: 'min(420px, 90vw)' }}>
               {schemasByDomain.map(({ domain, items }) => (
                 <div key={domain.id}>
                   <div className="px-2 py-1 text-[10px] font-bold uppercase tracking-wide sticky top-0 bg-slate-50 border-b border-slate-100"
@@ -463,6 +464,8 @@ function SchemaSelector({
               ))}
             </div>
           )}
+          {/* Backdrop pour fermer */}
+          {open && <div className="fixed inset-0 z-[99]" onClick={() => setOpen(false)} />}
         </div>
         {/* Texte libre */}
         <textarea
@@ -503,10 +506,10 @@ function ModeSelector({
 
   return (
     <div
-      className="rounded-xl border-2 bg-white shadow-sm overflow-hidden"
+      className="rounded-xl border-2 bg-white shadow-sm"
       style={{ ...style, borderColor: color }}
     >
-      <div className="px-3 py-1.5" style={{ backgroundColor: `${color}10` }}>
+      <div className="px-3 py-1.5 rounded-t-[10px]" style={{ backgroundColor: `${color}10` }}>
         <h3 className="text-xs font-bold" style={{ color }}>Stratégies / Modes :</h3>
       </div>
       <div className="px-2 py-1.5">
@@ -539,7 +542,8 @@ function ModeSelector({
             <ChevronDown className={`w-3 h-3 transition-transform ${open ? 'rotate-180' : ''}`} />
           </button>
           {open && (
-            <div className="absolute z-50 left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg max-h-64 overflow-y-auto">
+            <div className="fixed z-[100] bg-white border border-slate-200 rounded-lg shadow-xl max-h-72 overflow-y-auto"
+              style={{ width: 'min(380px, 90vw)' }}>
               {copingGroups.map((group) => {
                 const items = copingModes.filter((m) => m.copingStyleId === group.styleId);
                 return (
@@ -568,6 +572,8 @@ function ModeSelector({
               })}
             </div>
           )}
+          {/* Backdrop pour fermer */}
+          {open && <div className="fixed inset-0 z-[99]" onClick={() => setOpen(false)} />}
         </div>
         {/* Texte libre */}
         <textarea
