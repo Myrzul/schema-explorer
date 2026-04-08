@@ -575,7 +575,10 @@ function ModeSelector({
                           <span className={`mt-0.5 w-3 h-3 rounded border flex-shrink-0 flex items-center justify-center ${checked ? 'bg-violet-600 border-violet-600 text-white' : 'border-slate-300'}`}>
                             {checked && <span className="text-[8px]">✓</span>}
                           </span>
-                          <span className="font-medium text-slate-700">{m.name}</span>
+                          <span>
+                            <span className="font-medium text-slate-700">{m.name}</span>
+                            <span className="block text-[10px] text-slate-400 leading-tight mt-0.5">{m.description.slice(0, 80)}{m.description.length > 80 ? '…' : ''}</span>
+                          </span>
                         </button>
                       );
                     })}
