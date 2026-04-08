@@ -4,7 +4,8 @@ import { useState } from 'react';
 import { schemas, modes, disorders, domains, copingStyles, techniques } from '@/data';
 import { domainColors, modeCategoryColors } from '@/lib/colors';
 import type { Schema, SchemaMode, PersonalityDisorder } from '@/types';
-import { BookOpen, Brain, Users, Puzzle, Stethoscope, ChevronDown, ChevronUp } from 'lucide-react';
+import { BookOpen, Brain, Users, Puzzle, Stethoscope, ChevronDown, ChevronUp, Shield, Swords, HandHelping } from 'lucide-react';
+import type { CopingStyleId } from '@/types';
 
 // ---------------------------------------------------------------------------
 // Tabs
@@ -390,6 +391,147 @@ function TechniqueCard({ technique }: { technique: { id: string; name: string; t
 }
 
 // ---------------------------------------------------------------------------
+// Modes Grouped View — by category + coping strategy
+// ---------------------------------------------------------------------------
+
+const copingStrategyMeta: Record<CopingStyleId, { label: string; subtitle: string; icon: React.ReactNode; color: string; bgColor: string; borderColor: string }> = {
+  evitement: {
+    label: 'Modes d\'Évitement',
+    subtitle: 'Stratégie de Fuite — Apaiser ou fuir les émotions douloureuses de l\'Enfant Vulnérable',
+    icon: <Shield className="w-5 h-5" />,
+    color: '#5B21B6',
+    bgColor: '#F5F3FF',
+    borderColor: '#A78BFA',
+  },
+  compensation: {
+    label: 'Modes Compensateurs',
+    subtitle: 'Stratégie de Combat — Agir à l\'opposé du schéma pour compenser les manques',
+    icon: <Swords className="w-5 h-5" />,
+    color: '#9A3412',
+    bgColor: '#FFF7ED',
+    borderColor: '#F97316',
+  },
+  soumission: {
+    label: 'Mode de Soumission',
+    subtitle: 'Stratégie de Figement — Accepter le schéma et ressentir directement la douleur',
+    icon: <HandHelping className="w-5 h-5" />,
+    color: '#1E40AF',
+    bgColor: '#EFF6FF',
+    borderColor: '#60A5FA',
+  },
+};
+
+function ModesGroupedView() {
+  const enfantModes = modes.filter((m) => m.category === 'enfant');
+  const evitementModes = modes.filter((m) => m.category === 'coping-dysfonctionnel' && m.copingStyleId === 'evitement');
+  const compensationModes = modes.filter((m) => m.category === 'coping-dysfonctionnel' && m.copingStyleId === 'compensation');
+  const soumissionModes = modes.filter((m) => m.category === 'coping-dysfonctionnel' && m.copingStyleId === 'soumission');
+  const parentModes = modes.filter((m) => m.category === 'parent-dysfonctionnel');
+  const sainModes = modes.filter((m) => m.category === 'sain');
+
+  return (
+    <div className="space-y-8">
+      {/* Modes Enfant */}
+      <section>
+        <div className="flex items-center gap-2 mb-3">
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#DBEAFE', color: '#1E40AF' }}>
+            <Brain className="w-4 h-4" />
+          </div>
+          <div>
+            <h2 className="text-sm font-bold text-slate-800">Modes Enfant</h2>
+            <p className="text-xs text-slate-400">Persistance d&apos;états émotionnels infantiles intenses</p>
+          </div>
+        </div>
+        <div className="space-y-3">
+          {enfantModes.map((mode) => <ModeCard key={mode.id} mode={mode} />)}
+        </div>
+      </section>
+
+      {/* Modes Coping — 3 strategies */}
+      <section>
+        <div className="flex items-center gap-2 mb-1">
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#E9D5FF', color: '#5B21B6' }}>
+            <Shield className="w-4 h-4" />
+          </div>
+          <div>
+            <h2 className="text-sm font-bold text-slate-800">Modes de Coping (Modes Stratégiques)</h2>
+            <p className="text-xs text-slate-400">Systèmes de défense face aux schémas : fuite, combat ou figement</p>
+          </div>
+        </div>
+        <p className="text-xs text-slate-500 leading-relaxed mb-5 ml-10">
+          Ces modes sont des tentatives d&apos;adaptation développées dans l&apos;enfance pour protéger l&apos;individu
+          ou satisfaire ses besoins face à son environnement.
+        </p>
+
+        <div className="space-y-6">
+          {/* Évitement */}
+          {renderCopingStrategy('evitement', evitementModes)}
+          {/* Compensation */}
+          {renderCopingStrategy('compensation', compensationModes)}
+          {/* Soumission */}
+          {renderCopingStrategy('soumission', soumissionModes)}
+        </div>
+      </section>
+
+      {/* Modes Parent Dysfonctionnel */}
+      <section>
+        <div className="flex items-center gap-2 mb-3">
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#FECACA', color: '#991B1B' }}>
+            <Users className="w-4 h-4" />
+          </div>
+          <div>
+            <h2 className="text-sm font-bold text-slate-800">Modes Parent Dysfonctionnel</h2>
+            <p className="text-xs text-slate-400">Internalisation des fonctionnements parentaux pathologiques</p>
+          </div>
+        </div>
+        <div className="space-y-3">
+          {parentModes.map((mode) => <ModeCard key={mode.id} mode={mode} />)}
+        </div>
+      </section>
+
+      {/* Adulte Sain */}
+      <section>
+        <div className="flex items-center gap-2 mb-3">
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#D1FAE5', color: '#065F46' }}>
+            <Stethoscope className="w-4 h-4" />
+          </div>
+          <div>
+            <h2 className="text-sm font-bold text-slate-800">Mode Adulte Sain</h2>
+            <p className="text-xs text-slate-400">Le mode que le thérapeute incarne et aide le patient à développer</p>
+          </div>
+        </div>
+        <div className="space-y-3">
+          {sainModes.map((mode) => <ModeCard key={mode.id} mode={mode} />)}
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function renderCopingStrategy(strategyId: CopingStyleId, strategyModes: SchemaMode[]) {
+  const meta = copingStrategyMeta[strategyId];
+  const style = copingStyles.find((c) => c.id === strategyId);
+  return (
+    <div
+      className="rounded-xl border p-4"
+      style={{ borderColor: meta.borderColor, backgroundColor: meta.bgColor }}
+    >
+      <div className="flex items-center gap-2 mb-1">
+        <span style={{ color: meta.color }}>{meta.icon}</span>
+        <h3 className="font-bold text-sm" style={{ color: meta.color }}>{meta.label}</h3>
+        <span className="text-[10px] px-2 py-0.5 rounded-full border font-medium" style={{ borderColor: meta.borderColor, color: meta.color }}>
+          {style?.metaphor}
+        </span>
+      </div>
+      <p className="text-xs text-slate-500 mb-4 ml-7">{meta.subtitle}</p>
+      <div className="space-y-3">
+        {strategyModes.map((mode) => <ModeCard key={mode.id} mode={mode} />)}
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Domain filter for schemas
 // ---------------------------------------------------------------------------
 
@@ -489,11 +631,7 @@ export default function FichesPage() {
 
         {/* Modes tab */}
         {activeTab === 'modes' && (
-          <div className="space-y-3">
-            {modes.map((mode) => (
-              <ModeCard key={mode.id} mode={mode} />
-            ))}
-          </div>
+          <ModesGroupedView />
         )}
 
         {/* Disorders tab */}
