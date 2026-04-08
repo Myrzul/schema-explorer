@@ -1,8 +1,11 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Download, RotateCcw } from 'lucide-react';
+import { ArrowLeft, Download, RotateCcw, ChevronDown, X } from 'lucide-react';
+import { schemas } from '@/data/schemas';
+import { modes } from '@/data/modes';
+import { domains } from '@/data/domains';
 
 // ---------------------------------------------------------------------------
 // Data
@@ -12,8 +15,10 @@ interface DiagramData {
   patientName: string;
   date: string;
   experiencesPassees: string;
-  schemas: string;
-  strategies: string;
+  selectedSchemaIds: string[];
+  schemasLibre: string;
+  selectedModeIds: string[];
+  strategiesLibre: string;
   consequences: string;
   evenementsDeclencheurs: string;
   penseesAutomatiques: string;
@@ -25,13 +30,32 @@ const emptyData: DiagramData = {
   patientName: '',
   date: new Date().toISOString().split('T')[0],
   experiencesPassees: '',
-  schemas: '',
-  strategies: '',
+  selectedSchemaIds: [],
+  schemasLibre: '',
+  selectedModeIds: [],
+  strategiesLibre: '',
   consequences: '',
   evenementsDeclencheurs: '',
   penseesAutomatiques: '',
   emotions: '',
   comportements: '',
+};
+
+// Modes coping groupés par style
+const copingModes = modes.filter((m) => m.category === 'coping-dysfonctionnel');
+const copingGroups = [
+  { label: 'Évitement', styleId: 'evitement', color: '#7C3AED' },
+  { label: 'Soumission', styleId: 'soumission', color: '#2563EB' },
+  { label: 'Compensation', styleId: 'compensation', color: '#EA580C' },
+] as const;
+
+// Schémas groupés par domaine
+const domainColors: Record<string, string> = {
+  'separation-rejet': '#DC2626',
+  'manque-autonomie': '#EA580C',
+  'manque-limites': '#CA8A04',
+  'orientation-autres': '#16A34A',
+  'survigilance-inhibition': '#2563EB',
 };
 
 // ---------------------------------------------------------------------------
@@ -57,16 +81,54 @@ function ArrowCurve({ d }: { d: string }) {
 export default function ConceptualisationPage() {
   const [data, setData] = useState<DiagramData>({ ...emptyData });
 
-  const update = useCallback((key: keyof DiagramData, value: string) => {
+  const updateStr = useCallback((key: keyof DiagramData, value: string) => {
     setData((prev) => ({ ...prev, [key]: value }));
+  }, []);
+
+  const toggleSchema = useCallback((id: string) => {
+    setData((prev) => ({
+      ...prev,
+      selectedSchemaIds: prev.selectedSchemaIds.includes(id)
+        ? prev.selectedSchemaIds.filter((s) => s !== id)
+        : [...prev.selectedSchemaIds, id],
+    }));
+  }, []);
+
+  const toggleMode = useCallback((id: string) => {
+    setData((prev) => ({
+      ...prev,
+      selectedModeIds: prev.selectedModeIds.includes(id)
+        ? prev.selectedModeIds.filter((s) => s !== id)
+        : [...prev.selectedModeIds, id],
+    }));
   }, []);
 
   const handleReset = () => setData({ ...emptyData, date: new Date().toISOString().split('T')[0] });
 
+  // Texte combiné pour le PDF
+  const schemasText = useMemo(() => {
+    const selected = data.selectedSchemaIds
+      .map((id) => schemas.find((s) => s.id === id))
+      .filter(Boolean)
+      .map((s) => `• ${s!.name} — ${s!.centralBelief}`)
+      .join('\n');
+    return [selected, data.schemasLibre].filter(Boolean).join('\n');
+  }, [data.selectedSchemaIds, data.schemasLibre]);
+
+  const strategiesText = useMemo(() => {
+    const selected = data.selectedModeIds
+      .map((id) => modes.find((m) => m.id === id))
+      .filter(Boolean)
+      .map((m) => `• ${m!.name}`)
+      .join('\n');
+    return [selected, data.strategiesLibre].filter(Boolean).join('\n');
+  }, [data.selectedModeIds, data.strategiesLibre]);
+
   const handleDownloadPDF = () => {
     const w = window.open('', '_blank');
     if (!w) return;
-    w.document.write(`<!DOCTYPE html><html><head><title>Conceptualisation — ${data.patientName || 'Patient'}</title>
+    const esc = (s: string) => s.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    w.document.write(`<!DOCTYPE html><html><head><title>Conceptualisation — ${esc(data.patientName || 'Patient')}</title>
 <style>
 body{font-family:system-ui,sans-serif;margin:30px auto;max-width:800px;color:#333;font-size:13px}
 h1{font-size:18px;color:#b8453a;margin-bottom:2px}
@@ -79,52 +141,43 @@ svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none}
 @media print{body{margin:15px}.diagram{page-break-inside:avoid}}
 </style></head><body>
 <h1>Diagramme de Conceptualisation de Cas</h1>
-<p class="meta">${data.patientName ? `Patient : ${data.patientName} — ` : ''}Date : ${data.date}</p>
+<p class="meta">${data.patientName ? `Patient : ${esc(data.patientName)} — ` : ''}Date : ${data.date}</p>
 <div class="diagram">
   <svg viewBox="0 0 800 800">
     <defs><marker id="ah" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="8" markerHeight="6" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/></marker></defs>
-    <!-- Expériences → Schémas -->
     <line x1="310" y1="60" x2="400" y2="60" stroke="#64748b" stroke-width="2" marker-end="url(#ah)"/>
-    <!-- Expériences → Conséquences -->
     <path d="M 155 120 L 155 200" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#ah)"/>
-    <!-- Schémas → Stratégies -->
     <line x1="580" y1="120" x2="580" y2="200" stroke="#64748b" stroke-width="2" marker-end="url(#ah)"/>
-    <!-- Stratégies → Événements -->
     <line x1="580" y1="360" x2="580" y2="420" stroke="#64748b" stroke-width="2" marker-end="url(#ah)"/>
-    <!-- Événements → Pensées auto -->
     <line x1="580" y1="560" x2="580" y2="620" stroke="#64748b" stroke-width="2" marker-end="url(#ah)"/>
-    <!-- Pensées auto → Émotions -->
     <line x1="400" y1="700" x2="320" y2="700" stroke="#64748b" stroke-width="2" marker-end="url(#ah)"/>
-    <!-- Émotions → Comportements -->
     <line x1="200" y1="650" x2="200" y2="580" stroke="#64748b" stroke-width="2" marker-end="url(#ah)"/>
-    <!-- Comportements → Conséquences -->
     <line x1="200" y1="440" x2="200" y2="380" stroke="#64748b" stroke-width="2" marker-end="url(#ah)"/>
-    <!-- Conséquences → Schémas -->
     <path d="M 310 240 Q 360 160 400 80" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#ah)"/>
   </svg>
   <div class="box" style="left:10px;top:20px;width:280px;height:90px">
-    <div class="box-title">Expériences du passé :</div><div class="box-content">${data.experiencesPassees || '—'}</div>
+    <div class="box-title">Expériences du passé :</div><div class="box-content">${esc(data.experiencesPassees) || '—'}</div>
   </div>
   <div class="box" style="left:410px;top:20px;width:340px;height:90px">
-    <div class="box-title">Schémas :</div><div class="box-content">${data.schemas || '—'}</div>
+    <div class="box-title">Schémas :</div><div class="box-content">${esc(schemasText) || '—'}</div>
   </div>
   <div class="box" style="left:10px;top:210px;width:280px;height:160px">
-    <div class="box-title">Conséquences :</div><div class="box-content">${data.consequences || '—'}</div>
+    <div class="box-title">Conséquences :</div><div class="box-content">${esc(data.consequences) || '—'}</div>
   </div>
   <div class="box" style="left:410px;top:210px;width:340px;height:140px">
-    <div class="box-title">Stratégies :</div><div class="box-content">${data.strategies || '—'}</div>
+    <div class="box-title">Stratégies / Modes :</div><div class="box-content">${esc(strategiesText) || '—'}</div>
   </div>
   <div class="box" style="left:410px;top:430px;width:340px;height:120px">
-    <div class="box-title">Événements déclencheurs actuels :</div><div class="box-content">${data.evenementsDeclencheurs || '—'}</div>
+    <div class="box-title">Événements déclencheurs actuels :</div><div class="box-content">${esc(data.evenementsDeclencheurs) || '—'}</div>
   </div>
   <div class="box" style="left:60px;top:450px;width:260px;height:120px">
-    <div class="box-title">Comportements :</div><div class="box-content">${data.comportements || '—'}</div>
+    <div class="box-title">Comportements :</div><div class="box-content">${esc(data.comportements) || '—'}</div>
   </div>
   <div class="box" style="left:100px;top:650px;width:220px;height:100px">
-    <div class="box-title">Émotions :</div><div class="box-content">${data.emotions || '—'}</div>
+    <div class="box-title">Émotions :</div><div class="box-content">${esc(data.emotions) || '—'}</div>
   </div>
   <div class="box" style="left:410px;top:630px;width:340px;height:120px">
-    <div class="box-title">Pensées automatiques :</div><div class="box-content">${data.penseesAutomatiques || '—'}</div>
+    <div class="box-title">Pensées automatiques :</div><div class="box-content">${esc(data.penseesAutomatiques) || '—'}</div>
   </div>
 </div>
 <script>window.print()<\/script></body></html>`);
@@ -158,12 +211,12 @@ svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none}
         <div className="flex gap-4">
           <div className="flex-1">
             <label className="block text-[10px] font-semibold text-slate-400 uppercase mb-1">Patient</label>
-            <input type="text" value={data.patientName} onChange={(e) => update('patientName', e.target.value)}
+            <input type="text" value={data.patientName} onChange={(e) => updateStr('patientName', e.target.value)}
               className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:border-slate-400 bg-white" placeholder="Prénom Nom" />
           </div>
           <div className="w-40">
             <label className="block text-[10px] font-semibold text-slate-400 uppercase mb-1">Date</label>
-            <input type="date" value={data.date} onChange={(e) => update('date', e.target.value)}
+            <input type="date" value={data.date} onChange={(e) => updateStr('date', e.target.value)}
               className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:border-slate-400 bg-white" />
           </div>
         </div>
@@ -204,43 +257,41 @@ svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none}
           <DiagramBox
             title="Expériences du passé :"
             value={data.experiencesPassees}
-            onChange={(v) => update('experiencesPassees', v)}
+            onChange={(v) => updateStr('experiencesPassees', v)}
             placeholder="Événements marquants de l'enfance, dynamique familiale, traumatismes..."
             style={{ position: 'absolute', top: 0, left: 0, width: '38%', minHeight: 130 }}
             color="#1E40AF"
           />
-          <DiagramBox
-            title="Schémas :"
-            value={data.schemas}
-            onChange={(v) => update('schemas', v)}
-            placeholder="Abandon, Méfiance/Abus, Manque Affectif..."
+          <SchemaSelector
+            selectedIds={data.selectedSchemaIds}
+            onToggle={toggleSchema}
+            freeText={data.schemasLibre}
+            onFreeTextChange={(v) => updateStr('schemasLibre', v)}
             style={{ position: 'absolute', top: 0, right: 0, width: '52%', minHeight: 130 }}
-            color="#b8453a"
           />
 
           {/* Row 2 */}
           <DiagramBox
             title="Conséquences :"
             value={data.consequences}
-            onChange={(v) => update('consequences', v)}
+            onChange={(v) => updateStr('consequences', v)}
             placeholder="Renforcement des schémas, ruptures, isolement..."
             style={{ position: 'absolute', top: 220, left: 0, width: '38%', minHeight: 180 }}
             color="#854D0E"
           />
-          <DiagramBox
-            title="Stratégies :"
-            value={data.strategies}
-            onChange={(v) => update('strategies', v)}
-            placeholder="Soumission : ... \nÉvitement : ...\nCompensation : ..."
+          <ModeSelector
+            selectedIds={data.selectedModeIds}
+            onToggle={toggleMode}
+            freeText={data.strategiesLibre}
+            onFreeTextChange={(v) => updateStr('strategiesLibre', v)}
             style={{ position: 'absolute', top: 220, right: 0, width: '52%', minHeight: 180 }}
-            color="#5B21B6"
           />
 
           {/* Row 3 */}
           <DiagramBox
             title="Comportements :"
             value={data.comportements}
-            onChange={(v) => update('comportements', v)}
+            onChange={(v) => updateStr('comportements', v)}
             placeholder="Retrait, agressivité, dépendance affective..."
             style={{ position: 'absolute', top: 560, left: 0, width: '38%', minHeight: 130 }}
             color="#166534"
@@ -248,7 +299,7 @@ svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none}
           <DiagramBox
             title="Événements déclencheurs actuels :"
             value={data.evenementsDeclencheurs}
-            onChange={(v) => update('evenementsDeclencheurs', v)}
+            onChange={(v) => updateStr('evenementsDeclencheurs', v)}
             placeholder="Critique du conjoint, absence d'un proche, conflit au travail..."
             style={{ position: 'absolute', top: 480, right: 0, width: '52%', minHeight: 150 }}
             color="#9A3412"
@@ -258,7 +309,7 @@ svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none}
           <DiagramBox
             title="Émotions :"
             value={data.emotions}
-            onChange={(v) => update('emotions', v)}
+            onChange={(v) => updateStr('emotions', v)}
             placeholder="Tristesse, colère, honte, anxiété..."
             style={{ position: 'absolute', top: 770, left: '5%', width: '32%', minHeight: 120 }}
             color="#991B1B"
@@ -266,7 +317,7 @@ svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none}
           <DiagramBox
             title="Pensées automatiques :"
             value={data.penseesAutomatiques}
-            onChange={(v) => update('penseesAutomatiques', v)}
+            onChange={(v) => updateStr('penseesAutomatiques', v)}
             placeholder="« Je vais être abandonné(e) », « Je suis nul(le) »..."
             style={{ position: 'absolute', top: 700, right: 0, width: '52%', minHeight: 140 }}
             color="#7a4a9a"
@@ -312,6 +363,221 @@ function DiagramBox({
         style={{ minHeight: 'calc(100% - 32px)' }}
         rows={4}
       />
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// SchemaSelector — sélection multi-schémas groupés par domaine + texte libre
+// ---------------------------------------------------------------------------
+
+function SchemaSelector({
+  selectedIds,
+  onToggle,
+  freeText,
+  onFreeTextChange,
+  style,
+}: {
+  selectedIds: string[];
+  onToggle: (id: string) => void;
+  freeText: string;
+  onFreeTextChange: (v: string) => void;
+  style: React.CSSProperties;
+}) {
+  const [open, setOpen] = useState(false);
+  const color = '#b8453a';
+
+  const selectedSchemas = selectedIds
+    .map((id) => schemas.find((s) => s.id === id))
+    .filter(Boolean);
+
+  const schemasByDomain = useMemo(() => {
+    return domains.map((d) => ({
+      domain: d,
+      items: schemas.filter((s) => s.domainId === d.id),
+    }));
+  }, []);
+
+  return (
+    <div
+      className="rounded-xl border-2 bg-white shadow-sm overflow-hidden"
+      style={{ ...style, borderColor: color }}
+    >
+      <div className="px-3 py-1.5" style={{ backgroundColor: `${color}10` }}>
+        <h3 className="text-xs font-bold" style={{ color }}>Schémas :</h3>
+      </div>
+      <div className="px-2 py-1.5">
+        {/* Tags des schémas sélectionnés */}
+        {selectedSchemas.length > 0 && (
+          <div className="flex flex-wrap gap-1 mb-1.5">
+            {selectedSchemas.map((s) => (
+              <span
+                key={s!.id}
+                className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md text-[10px] font-medium text-white cursor-pointer hover:opacity-80"
+                style={{ backgroundColor: domainColors[s!.domainId] || '#64748b' }}
+                onClick={() => onToggle(s!.id)}
+                title={s!.centralBelief}
+              >
+                {s!.name}
+                <X className="w-2.5 h-2.5" />
+              </span>
+            ))}
+          </div>
+        )}
+        {/* Bouton dropdown */}
+        <div className="relative">
+          <button
+            onClick={() => setOpen(!open)}
+            className="w-full flex items-center justify-between px-2 py-1 rounded-md border border-slate-200 text-[11px] text-slate-500 hover:bg-slate-50"
+          >
+            <span>+ Ajouter un schéma…</span>
+            <ChevronDown className={`w-3 h-3 transition-transform ${open ? 'rotate-180' : ''}`} />
+          </button>
+          {open && (
+            <div className="absolute z-50 left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg max-h-64 overflow-y-auto">
+              {schemasByDomain.map(({ domain, items }) => (
+                <div key={domain.id}>
+                  <div className="px-2 py-1 text-[10px] font-bold uppercase tracking-wide sticky top-0 bg-slate-50 border-b border-slate-100"
+                    style={{ color: domainColors[domain.id] }}>
+                    {domain.name}
+                  </div>
+                  {items.map((s) => {
+                    const checked = selectedIds.includes(s.id);
+                    return (
+                      <button
+                        key={s.id}
+                        onClick={() => onToggle(s.id)}
+                        className={`w-full text-left px-2 py-1.5 text-[11px] hover:bg-slate-50 flex items-start gap-2 ${checked ? 'bg-red-50/50' : ''}`}
+                      >
+                        <span className={`mt-0.5 w-3 h-3 rounded border flex-shrink-0 flex items-center justify-center ${checked ? 'bg-red-600 border-red-600 text-white' : 'border-slate-300'}`}>
+                          {checked && <span className="text-[8px]">✓</span>}
+                        </span>
+                        <span>
+                          <span className="font-medium text-slate-700">{s.name}</span>
+                          <span className="block text-[10px] text-slate-400 leading-tight mt-0.5">{s.centralBelief}</span>
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+        {/* Texte libre */}
+        <textarea
+          value={freeText}
+          onChange={(e) => onFreeTextChange(e.target.value)}
+          placeholder="Notes libres…"
+          className="w-full mt-1.5 px-2 py-1 text-xs text-slate-700 leading-relaxed resize-none focus:outline-none placeholder:text-slate-300 border-t border-slate-100"
+          rows={2}
+        />
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// ModeSelector — sélection multi-modes coping groupés par style + texte libre
+// ---------------------------------------------------------------------------
+
+function ModeSelector({
+  selectedIds,
+  onToggle,
+  freeText,
+  onFreeTextChange,
+  style,
+}: {
+  selectedIds: string[];
+  onToggle: (id: string) => void;
+  freeText: string;
+  onFreeTextChange: (v: string) => void;
+  style: React.CSSProperties;
+}) {
+  const [open, setOpen] = useState(false);
+  const color = '#5B21B6';
+
+  const selectedModes = selectedIds
+    .map((id) => modes.find((m) => m.id === id))
+    .filter(Boolean);
+
+  return (
+    <div
+      className="rounded-xl border-2 bg-white shadow-sm overflow-hidden"
+      style={{ ...style, borderColor: color }}
+    >
+      <div className="px-3 py-1.5" style={{ backgroundColor: `${color}10` }}>
+        <h3 className="text-xs font-bold" style={{ color }}>Stratégies / Modes :</h3>
+      </div>
+      <div className="px-2 py-1.5">
+        {/* Tags des modes sélectionnés */}
+        {selectedModes.length > 0 && (
+          <div className="flex flex-wrap gap-1 mb-1.5">
+            {selectedModes.map((m) => {
+              const group = copingGroups.find((g) => g.styleId === m!.copingStyleId);
+              return (
+                <span
+                  key={m!.id}
+                  className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md text-[10px] font-medium text-white cursor-pointer hover:opacity-80"
+                  style={{ backgroundColor: group?.color || '#64748b' }}
+                  onClick={() => onToggle(m!.id)}
+                >
+                  {m!.name}
+                  <X className="w-2.5 h-2.5" />
+                </span>
+              );
+            })}
+          </div>
+        )}
+        {/* Bouton dropdown */}
+        <div className="relative">
+          <button
+            onClick={() => setOpen(!open)}
+            className="w-full flex items-center justify-between px-2 py-1 rounded-md border border-slate-200 text-[11px] text-slate-500 hover:bg-slate-50"
+          >
+            <span>+ Ajouter un mode…</span>
+            <ChevronDown className={`w-3 h-3 transition-transform ${open ? 'rotate-180' : ''}`} />
+          </button>
+          {open && (
+            <div className="absolute z-50 left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg max-h-64 overflow-y-auto">
+              {copingGroups.map((group) => {
+                const items = copingModes.filter((m) => m.copingStyleId === group.styleId);
+                return (
+                  <div key={group.styleId}>
+                    <div className="px-2 py-1 text-[10px] font-bold uppercase tracking-wide sticky top-0 bg-slate-50 border-b border-slate-100"
+                      style={{ color: group.color }}>
+                      {group.label}
+                    </div>
+                    {items.map((m) => {
+                      const checked = selectedIds.includes(m.id);
+                      return (
+                        <button
+                          key={m.id}
+                          onClick={() => onToggle(m.id)}
+                          className={`w-full text-left px-2 py-1.5 text-[11px] hover:bg-slate-50 flex items-start gap-2 ${checked ? 'bg-violet-50/50' : ''}`}
+                        >
+                          <span className={`mt-0.5 w-3 h-3 rounded border flex-shrink-0 flex items-center justify-center ${checked ? 'bg-violet-600 border-violet-600 text-white' : 'border-slate-300'}`}>
+                            {checked && <span className="text-[8px]">✓</span>}
+                          </span>
+                          <span className="font-medium text-slate-700">{m.name}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+        {/* Texte libre */}
+        <textarea
+          value={freeText}
+          onChange={(e) => onFreeTextChange(e.target.value)}
+          placeholder="Soumission : …&#10;Évitement : …&#10;Compensation : …"
+          className="w-full mt-1.5 px-2 py-1 text-xs text-slate-700 leading-relaxed resize-none focus:outline-none placeholder:text-slate-300 border-t border-slate-100"
+          rows={2}
+        />
+      </div>
     </div>
   );
 }
