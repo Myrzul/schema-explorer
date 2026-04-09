@@ -136,59 +136,105 @@ export default function ConceptualisationPage() {
     const w = window.open('', '_blank');
     if (!w) return;
     const esc = (s: string) => s.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    w.document.write(`<!DOCTYPE html><html><head><title>Conceptualisation — ${esc(data.patientName || 'Patient')}</title>
+    const nl2br = (s: string) => esc(s).replace(/\n/g, '<br/>');
+    w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Conceptualisation — ${esc(data.patientName || 'Patient')}</title>
 <style>
-body{font-family:system-ui,sans-serif;margin:30px auto;max-width:800px;color:#333;font-size:13px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;margin:30px auto;max-width:780px;color:#333;font-size:12px;line-height:1.5}
 h1{font-size:18px;color:#b8453a;margin-bottom:2px}
-.meta{color:#666;font-size:11px;margin-bottom:24px}
-.diagram{position:relative;width:100%;height:800px}
-.box{position:absolute;border:2px solid #334155;border-radius:8px;padding:10px 12px;background:white;min-height:80px}
-.box-title{font-weight:700;font-size:12px;color:#334155;margin-bottom:4px}
-.box-content{font-size:11px;color:#555;white-space:pre-wrap;line-height:1.5}
-svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none}
-@media print{body{margin:15px}.diagram{page-break-inside:avoid}}
+.meta{color:#666;font-size:11px;margin-bottom:20px}
+.row{display:flex;gap:16px;margin-bottom:6px}
+.row .col{flex:1;min-width:0}
+.row .col-left{flex:0 0 45%}
+.row .col-right{flex:0 0 53%}
+.box{border:2px solid #334155;border-radius:8px;padding:10px 12px;background:white;min-height:50px}
+.box-title{font-weight:700;font-size:11px;color:#334155;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.3px}
+.box-content{font-size:11px;color:#444;line-height:1.55;word-wrap:break-word;overflow-wrap:break-word}
+.arrow{text-align:center;color:#64748b;font-size:18px;line-height:1;padding:2px 0}
+.arrow-row{display:flex;gap:16px;margin-bottom:6px}
+.arrow-row .col{flex:1;display:flex;justify-content:center}
+.arrow-row .col-left{flex:0 0 45%}
+.arrow-row .col-right{flex:0 0 53%}
+.arrow-horiz{display:flex;align-items:center;justify-content:center;color:#64748b;font-size:14px;padding:0 4px}
+.top-row{display:flex;gap:0;margin-bottom:6px;align-items:stretch}
+.top-row .col-left{flex:0 0 45%}
+.top-row .arrow-horiz{flex:0 0 2%;display:flex;align-items:center;justify-content:center}
+.top-row .col-right{flex:0 0 53%}
+@media print{body{margin:15px}@page{size:A4;margin:15mm}}
 </style></head><body>
 <h1>Diagramme de Conceptualisation de Cas</h1>
-<p class="meta">${data.patientName ? `Patient : ${esc(data.patientName)} — ` : ''}Date : ${data.date}</p>
-<div class="diagram">
-  <svg viewBox="0 0 800 800">
-    <defs><marker id="ah" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="8" markerHeight="6" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/></marker></defs>
-    <line x1="310" y1="60" x2="400" y2="60" stroke="#64748b" stroke-width="2" marker-end="url(#ah)"/>
-    <path d="M 155 120 L 155 200" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#ah)"/>
-    <line x1="580" y1="120" x2="580" y2="200" stroke="#64748b" stroke-width="2" marker-end="url(#ah)"/>
-    <line x1="580" y1="360" x2="580" y2="420" stroke="#64748b" stroke-width="2" marker-end="url(#ah)"/>
-    <line x1="580" y1="560" x2="580" y2="620" stroke="#64748b" stroke-width="2" marker-end="url(#ah)"/>
-    <line x1="400" y1="700" x2="320" y2="700" stroke="#64748b" stroke-width="2" marker-end="url(#ah)"/>
-    <line x1="200" y1="650" x2="200" y2="580" stroke="#64748b" stroke-width="2" marker-end="url(#ah)"/>
-    <line x1="200" y1="440" x2="200" y2="380" stroke="#64748b" stroke-width="2" marker-end="url(#ah)"/>
-    <path d="M 310 240 Q 360 160 400 80" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#ah)"/>
-  </svg>
-  <div class="box" style="left:10px;top:20px;width:280px;height:90px">
-    <div class="box-title">Expériences du passé :</div><div class="box-content">${esc(data.experiencesPassees) || '—'}</div>
-  </div>
-  <div class="box" style="left:410px;top:20px;width:340px;height:90px">
-    <div class="box-title">Schémas :</div><div class="box-content">${esc(schemasText) || '—'}</div>
-  </div>
-  <div class="box" style="left:10px;top:210px;width:280px;height:160px">
-    <div class="box-title">Conséquences :</div><div class="box-content">${esc(data.consequences) || '—'}</div>
-  </div>
-  <div class="box" style="left:410px;top:210px;width:340px;height:140px">
-    <div class="box-title">Stratégies / Modes :</div><div class="box-content">${esc(strategiesText) || '—'}</div>
-  </div>
-  <div class="box" style="left:410px;top:430px;width:340px;height:120px">
-    <div class="box-title">Événements déclencheurs actuels :</div><div class="box-content">${esc(data.evenementsDeclencheurs) || '—'}</div>
-  </div>
-  <div class="box" style="left:60px;top:450px;width:260px;height:120px">
-    <div class="box-title">Comportements :</div><div class="box-content">${esc(data.comportements) || '—'}</div>
-  </div>
-  <div class="box" style="left:100px;top:650px;width:220px;height:100px">
-    <div class="box-title">Émotions :</div><div class="box-content">${esc(data.emotions) || '—'}</div>
-  </div>
-  <div class="box" style="left:410px;top:630px;width:340px;height:120px">
-    <div class="box-title">Pensées automatiques :</div><div class="box-content">${esc(data.penseesAutomatiques) || '—'}</div>
-  </div>
+<p class="meta">${data.patientName ? `Patient : ${esc(data.patientName)} &mdash; ` : ''}Date : ${data.date}</p>
+
+<!-- Ligne 1 : Expériences → Schémas -->
+<div class="top-row">
+  <div class="col-left"><div class="box">
+    <div class="box-title">Exp\u00e9riences du pass\u00e9 :</div>
+    <div class="box-content">${nl2br(data.experiencesPassees) || '&mdash;'}</div>
+  </div></div>
+  <div class="arrow-horiz">&rarr;</div>
+  <div class="col-right"><div class="box">
+    <div class="box-title">Sch\u00e9mas :</div>
+    <div class="box-content">${nl2br(schemasText) || '&mdash;'}</div>
+  </div></div>
 </div>
-<script>window.print()<\/script></body></html>`);
+
+<!-- Flèches ↓ ↓ -->
+<div class="arrow-row">
+  <div class="col col-left"><div class="arrow">&darr;</div></div>
+  <div class="col col-right"><div class="arrow">&darr;</div></div>
+</div>
+
+<!-- Ligne 2 : Conséquences | Stratégies/Modes -->
+<div class="row">
+  <div class="col col-left"><div class="box">
+    <div class="box-title">Cons\u00e9quences :</div>
+    <div class="box-content">${nl2br(data.consequences) || '&mdash;'}</div>
+  </div></div>
+  <div class="col col-right"><div class="box">
+    <div class="box-title">Strat\u00e9gies / Modes :</div>
+    <div class="box-content">${nl2br(strategiesText) || '&mdash;'}</div>
+  </div></div>
+</div>
+
+<!-- Flèches ↑ ↓ -->
+<div class="arrow-row">
+  <div class="col col-left"><div class="arrow">&uarr;</div></div>
+  <div class="col col-right"><div class="arrow">&darr;</div></div>
+</div>
+
+<!-- Ligne 3 : Comportements | Événements déclencheurs -->
+<div class="row">
+  <div class="col col-left"><div class="box">
+    <div class="box-title">Comportements :</div>
+    <div class="box-content">${nl2br(data.comportements) || '&mdash;'}</div>
+  </div></div>
+  <div class="col col-right"><div class="box">
+    <div class="box-title">\u00c9v\u00e9nements d\u00e9clencheurs actuels :</div>
+    <div class="box-content">${nl2br(data.evenementsDeclencheurs) || '&mdash;'}</div>
+  </div></div>
+</div>
+
+<!-- Flèches ↑ ↓ -->
+<div class="arrow-row">
+  <div class="col col-left"><div class="arrow">&uarr;</div></div>
+  <div class="col col-right"><div class="arrow">&darr;</div></div>
+</div>
+
+<!-- Ligne 4 : Émotions ← Pensées automatiques -->
+<div class="top-row">
+  <div class="col-left"><div class="box">
+    <div class="box-title">\u00c9motions :</div>
+    <div class="box-content">${nl2br(data.emotions) || '&mdash;'}</div>
+  </div></div>
+  <div class="arrow-horiz">&larr;</div>
+  <div class="col-right"><div class="box">
+    <div class="box-title">Pens\u00e9es automatiques :</div>
+    <div class="box-content">${nl2br(data.penseesAutomatiques) || '&mdash;'}</div>
+  </div></div>
+</div>
+
+<script>setTimeout(function(){window.print()},200)<\/script>
+</body></html>`);
     w.document.close();
   };
 
