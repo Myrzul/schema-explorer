@@ -11,13 +11,12 @@ import type { CopingStyleId } from '@/types';
 // Tabs
 // ---------------------------------------------------------------------------
 
-type TabId = 'schemas' | 'modes' | 'troubles' | 'techniques';
+type TabId = 'schemas' | 'modes' | 'troubles';
 
 const tabs: { id: TabId; label: string; icon: React.ReactNode }[] = [
   { id: 'schemas', label: 'Schémas (18)', icon: <BookOpen className="w-4 h-4" /> },
   { id: 'modes', label: 'Modes (22)', icon: <Brain className="w-4 h-4" /> },
   { id: 'troubles', label: 'Troubles TP (8)', icon: <Users className="w-4 h-4" /> },
-  { id: 'techniques', label: 'Techniques (25)', icon: <Stethoscope className="w-4 h-4" /> },
 ];
 
 // ---------------------------------------------------------------------------
@@ -706,10 +705,7 @@ export default function FichesPage() {
           </div>
         )}
 
-        {/* Techniques tab */}
-        {activeTab === 'techniques' && (
-          <TechniquesGroupedView />
-        )}
+        {/* Techniques moved to Prise en charge */}
       </div>
     </div>
   );
