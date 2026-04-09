@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { schemas, modes, disorders, domains, copingStyles, techniques, techniqueCategories } from '@/data';
 import { domainColors, modeCategoryColors } from '@/lib/colors';
 import type { Schema, SchemaMode, PersonalityDisorder, TherapeuticTechnique } from '@/types';
-import { BookOpen, Brain, Users, Puzzle, Stethoscope, ChevronDown, ChevronUp, Shield, Swords, HandHelping } from 'lucide-react';
+import { BookOpen, Brain, Users, Puzzle, Stethoscope, ChevronDown, ChevronUp, Shield, Swords, HandHelping, AlertTriangle } from 'lucide-react';
 import type { CopingStyleId } from '@/types';
 
 // ---------------------------------------------------------------------------
@@ -699,6 +699,29 @@ export default function FichesPage() {
         {/* Disorders tab */}
         {activeTab === 'troubles' && (
           <div className="space-y-3">
+            {/* DSM-5-TR Warning */}
+            <div className="rounded-xl border border-amber-300 bg-amber-50 p-4 mb-2">
+              <div className="flex items-start gap-3">
+                <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                <div>
+                  <h3 className="text-sm font-semibold text-amber-800">
+                    Avertissement — Classification DSM-5-TR
+                  </h3>
+                  <p className="text-xs text-amber-700 leading-relaxed mt-1">
+                    La thérapie des schémas utilise une conceptualisation
+                    <strong> dimensionnelle et transcatégorielle</strong> des
+                    troubles de la personnalité. Les catégories présentées ici
+                    correspondent à la section II du DSM-5-TR (modèle
+                    catégoriel classique). Le modèle alternatif de la section III
+                    (AMPD) propose une approche dimensionnelle plus compatible
+                    avec le modèle de Young. Ces fiches sont fournies à titre
+                    <strong> indicatif et pédagogique</strong> — un diagnostic
+                    de trouble de la personnalité requiert une évaluation
+                    clinique approfondie.
+                  </p>
+                </div>
+              </div>
+            </div>
             {disorders.map((disorder) => (
               <DisorderCard key={disorder.id} disorder={disorder} />
             ))}

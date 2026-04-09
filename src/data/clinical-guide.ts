@@ -597,3 +597,574 @@ export const clinicalProtocols: ClinicalProtocol[] = [
     ],
   },
 ];
+
+// ======================== MOTEUR DE RÈGLES DÉCISIONNELLES ========================
+// Basé sur les chapitres 7-10 de Jeffrey Young — Thérapie des schémas
+
+// --- Types ---
+
+export type RecommendationPriority = 'critique' | 'haute' | 'moyenne' | 'basse';
+
+export interface SessionRecommendation {
+  id: string;
+  title: string;
+  description: string;
+  priority: RecommendationPriority;
+  techniqueIds: string[];
+  protocolIds: string[];
+  pathwayStepIds: string[];
+  warnings: string[];
+  source: string;
+}
+
+export interface BlockedSituationDiagnosis {
+  id: string;
+  label: string;
+  description: string;
+  possibleCauses: string[];
+  suggestedActions: string[];
+}
+
+// --- Règles par domaine → priorité de technique ---
+
+interface DomainRule {
+  domainId: string;
+  priorityCategories: string[];
+  rationale: string;
+}
+
+const domainRules: DomainRule[] = [
+  {
+    domainId: 'separation-rejet',
+    priorityCategories: ['relationnel', 'emotionnel', 'cognitif', 'comportemental'],
+    rationale:
+      'Les schémas de ce domaine (abandon, méfiance, manque affectif, imperfection, isolement) sont liés à des blessures relationnelles profondes. La relation thérapeutique et le travail émotionnel sont prioritaires.',
+  },
+  {
+    domainId: 'manque-autonomie',
+    priorityCategories: ['cognitif', 'comportemental', 'emotionnel', 'relationnel'],
+    rationale:
+      'Les schémas de dépendance, vulnérabilité, fusionnement et échec nécessitent un travail cognitif-comportemental pour renforcer l\'autonomie et la confiance.',
+  },
+  {
+    domainId: 'manque-limites',
+    priorityCategories: ['comportemental', 'cognitif', 'relationnel', 'emotionnel'],
+    rationale:
+      'Les schémas de droits exagérés et contrôle de soi insuffisant nécessitent d\'abord un cadrage comportemental et des limites claires.',
+  },
+  {
+    domainId: 'orientation-autres',
+    priorityCategories: ['emotionnel', 'relationnel', 'cognitif', 'comportemental'],
+    rationale:
+      'Les schémas d\'assujettissement, abnégation et recherche d\'approbation nécessitent un travail émotionnel pour reconnecter le patient à ses propres besoins.',
+  },
+  {
+    domainId: 'survigilance-inhibition',
+    priorityCategories: ['emotionnel', 'cognitif', 'comportemental', 'relationnel'],
+    rationale:
+      'Les schémas de négativité, surcontrôle, punition et idéaux exigeants nécessitent un accès émotionnel (souvent bloqué) puis une restructuration cognitive.',
+  },
+];
+
+// --- Règles par mode → stratégie thérapeute ---
+
+interface ModeRule {
+  modeId: string;
+  priority: RecommendationPriority;
+  action: string;
+  techniqueIds: string[];
+  protocolIds: string[];
+  pathwayStepIds: string[];
+  warnings: string[];
+}
+
+const modeRules: ModeRule[] = [
+  {
+    modeId: 'protecteur-detache',
+    priority: 'critique',
+    action: 'TOUJOURS activer les ressources en premier. Le Protecteur Détaché bloque tout accès émotionnel — aucune reconsolidation n\'est possible tant qu\'il est actif.',
+    techniqueIds: ['confrontation-empathique', 're-parentage-partiel'],
+    protocolIds: ['activation-ressources'],
+    pathwayStepIds: ['ressources'],
+    warnings: [
+      'Ne pas forcer le passage — le Protecteur a été vital pour la survie',
+      'Éviter les séances purement cognitives qui renforcent le détachement',
+      'Vérifier le niveau d\'activation émotionnelle — hypo-activation = aucune guérison possible',
+    ],
+  },
+  {
+    modeId: 'enfant-vulnerable',
+    priority: 'critique',
+    action: 'Reparentage en imagerie. C\'est le mode où la guérison se produit — l\'objectif est d\'y accéder et d\'y rester.',
+    techniqueIds: ['reparentage-imagerie', 'dialogues-imagerie', 'travail-chaises'],
+    protocolIds: ['reparentage-imagerie'],
+    pathwayStepIds: ['acces-ev', 'reparentage'],
+    warnings: [
+      'Ne pas « faire taire » l\'enfant — la vulnérabilité est l\'espace de guérison',
+      'Ne pas passer trop vite au cognitif — rester dans le ressenti',
+      'Vérifier la fenêtre de tolérance avant le travail émotionnel',
+    ],
+  },
+  {
+    modeId: 'enfant-colereux',
+    priority: 'haute',
+    action: 'Valider et canaliser la colère légitime AVANT toute résolution. L\'expression de la rage est nécessaire.',
+    techniqueIds: ['travail-chaises', 'dialogues-imagerie'],
+    protocolIds: ['confronter-parent-punitif'],
+    pathwayStepIds: ['colere'],
+    warnings: [
+      'Ne PAS exiger le pardon — ce n\'est pas un objectif',
+      'Ne pas réprimer la colère — elle doit s\'exprimer pour le deuil',
+      'Maintenir dans la fenêtre de tolérance',
+    ],
+  },
+  {
+    modeId: 'parent-punitif',
+    priority: 'critique',
+    action: 'Confrontation OBLIGATOIRE. Le thérapeute doit se montrer ferme et protecteur — la faute incombait à l\'adulte, pas à l\'enfant.',
+    techniqueIds: ['travail-chaises', 'dialogues-imagerie', 'confrontation-empathique'],
+    protocolIds: ['confronter-parent-punitif'],
+    pathwayStepIds: ['parent-punitif'],
+    warnings: [
+      'Ne pas minimiser la toxicité du Parent Punitif',
+      'Ne pas entrer en débat — affirmer les droits de l\'enfant',
+      'Vérifier que le patient ne reste pas dans le mode PP en quittant la séance',
+    ],
+  },
+  {
+    modeId: 'parent-exigeant',
+    priority: 'haute',
+    action: 'Assouplir les standards rigides. Valider le besoin de réussir PUIS montrer le coût humain.',
+    techniqueIds: ['confrontation-empathique', 'travail-chaises', 'explications-alternatives'],
+    protocolIds: ['confronter-parent-punitif'],
+    pathwayStepIds: ['parent-punitif'],
+    warnings: [
+      'Ne pas renforcer l\'exigence en félicitant uniquement les performances',
+      'Attention au piège de la « thérapie productive » — le PE peut détourner la thérapie',
+    ],
+  },
+  {
+    modeId: 'soumis-obeissant',
+    priority: 'haute',
+    action: 'Aider le patient à reconnaître ses propres besoins et à s\'affirmer.',
+    techniqueIds: ['jeux-de-roles', 'confrontation-empathique', 'taches-assignees'],
+    protocolIds: ['reparentage-imagerie'],
+    pathwayStepIds: ['transfert-as'],
+    warnings: [
+      '⚠️ FAUX PROGRÈS — Le patient peut être « trop bon patient » et mimer l\'alliance thérapeutique',
+      'L\'obéissance en séance N\'EST PAS un progrès — c\'est le mode Soumis',
+      'Aller progressivement — une affirmation trop brusque peut déclencher une panique',
+    ],
+  },
+  {
+    modeId: 'auto-magnificateur',
+    priority: 'haute',
+    action: 'Accéder à la vulnérabilité cachée sous la compensation. Ne pas attaquer frontalement.',
+    techniqueIds: ['confrontation-empathique', 'reparentage-imagerie', 'dialogues-imagerie'],
+    protocolIds: ['imagerie-diagnostique', 'reparentage-imagerie'],
+    pathwayStepIds: ['acces-ev'],
+    warnings: [
+      'Ne pas entrer en lutte de pouvoir — le Compensateur cherche le contrôle',
+      'Le patient peut quitter la thérapie si confronté trop tôt — dosage crucial',
+      'Attention au contre-transfert : irritation, sentiment d\'être manipulé',
+    ],
+  },
+  {
+    modeId: 'protecteur-evitant',
+    priority: 'haute',
+    action: 'Réduire l\'évitement progressivement. Sécuriser d\'abord via les ressources.',
+    techniqueIds: ['confrontation-empathique', 're-parentage-partiel'],
+    protocolIds: ['activation-ressources'],
+    pathwayStepIds: ['ressources'],
+    warnings: [
+      'Ne pas forcer l\'exposition — l\'évitement a une fonction protectrice',
+      'Procéder par étapes graduelles',
+    ],
+  },
+  {
+    modeId: 'enfant-impulsif',
+    priority: 'moyenne',
+    action: 'Poser des limites avec empathie. Valider le besoin sous-jacent tout en cadrant le comportement.',
+    techniqueIds: ['confrontation-empathique', 'jeux-de-roles', 'taches-assignees'],
+    protocolIds: [],
+    pathwayStepIds: ['transfert-as'],
+    warnings: [
+      'Ne pas être punitif — distinguer la limite empathique de la punition',
+      'Le cadrage doit venir APRÈS la validation du besoin',
+    ],
+  },
+  {
+    modeId: 'parent-culpabilisant',
+    priority: 'haute',
+    action: 'Déconstruire la culpabilité toxique. Similaire au Parent Punitif mais centré sur la honte et la culpabilité.',
+    techniqueIds: ['travail-chaises', 'confrontation-empathique', 'dialogues-imagerie'],
+    protocolIds: ['confronter-parent-punitif'],
+    pathwayStepIds: ['parent-punitif'],
+    warnings: [
+      'Attention à la culpabilité secondaire (« je me sens coupable de me sentir coupable »)',
+    ],
+  },
+];
+
+// --- Règles par phase → outils recommandés ---
+
+interface PhaseRule {
+  phaseId: string;
+  primaryTechniqueIds: string[];
+  avoidTechniqueIds: string[];
+  notes: string;
+}
+
+const phaseRules: PhaseRule[] = [
+  {
+    phaseId: 'diagnostic',
+    primaryTechniqueIds: ['conceptualisation-cas', 'fleche-descendante', 'questionnaire-ysq', 'imagerie-diagnostique', 'analyse-temperament'],
+    avoidTechniqueIds: ['travail-chaises', 'reparentage-imagerie'],
+    notes: 'Phase d\'évaluation — pas de travail émotionnel profond. L\'imagerie est uniquement diagnostique.',
+  },
+  {
+    phaseId: 'conceptualisation',
+    primaryTechniqueIds: ['conceptualisation-cas', 'fleche-descendante', 'lettres-parents', 'enregistrement-pensees'],
+    avoidTechniqueIds: ['travail-chaises'],
+    notes: 'Psychoéducation et co-construction du diagramme. Le patient comprend le « pourquoi » de ses réactions.',
+  },
+  {
+    phaseId: 'changement',
+    primaryTechniqueIds: ['reparentage-imagerie', 'dialogues-imagerie', 'travail-chaises', 'confrontation-empathique', 're-parentage-partiel', 'emdr-brainspotting'],
+    avoidTechniqueIds: [],
+    notes: 'Phase centrale — travail émotionnel profond. Reconsolidation mnésique via l\'imagerie et les chaises.',
+  },
+  {
+    phaseId: 'rupture-scenarios',
+    primaryTechniqueIds: ['jeux-de-roles', 'taches-assignees', 'modification-coping', 'fiches-memo-flash', 'activites-ressource'],
+    avoidTechniqueIds: [],
+    notes: 'Phase comportementale — ancrer les changements dans le quotidien.',
+  },
+  {
+    phaseId: 'consolidation',
+    primaryTechniqueIds: ['lettres-parents', 'enregistrement-pensees', 'taches-assignees', 'activites-ressource'],
+    avoidTechniqueIds: [],
+    notes: 'Renforcer l\'Adulte Sain. Espacement progressif des séances.',
+  },
+];
+
+// --- Règles de sévérité (trouble TP) ---
+
+interface SeverityRule {
+  disorderIds: string[];
+  forceModesFirst: boolean;
+  warning: string;
+  additionalTechniqueIds: string[];
+}
+
+const severityRules: SeverityRule[] = [
+  {
+    disorderIds: ['borderline'],
+    forceModesFirst: true,
+    warning: 'Sévérité haute — Trouble Borderline : privilégier l\'approche par modes. Stabiliser la relation thérapeutique et les ressources AVANT le travail émotionnel profond.',
+    additionalTechniqueIds: ['activites-ressource', 're-parentage-partiel'],
+  },
+  {
+    disorderIds: ['narcissique'],
+    forceModesFirst: true,
+    warning: 'Sévérité haute — Trouble Narcissique : approche par modes obligatoire. Le Compensateur / Auto-Magnificateur protège un Enfant Vulnérable — construire l\'alliance avant de confronter.',
+    additionalTechniqueIds: ['confrontation-empathique'],
+  },
+  {
+    disorderIds: ['antisociale'],
+    forceModesFirst: true,
+    warning: 'Sévérité haute — Trouble Antisocial : approche par modes avec cadrage ferme. Attention au contre-transfert et aux tentatives de manipulation.',
+    additionalTechniqueIds: ['confrontation-empathique'],
+  },
+];
+
+// --- Diagnostics pour situations bloquées ---
+
+export const blockedSituationDiagnoses: BlockedSituationDiagnosis[] = [
+  {
+    id: 'patient-decroche',
+    label: 'Le patient « décroche » en séance',
+    description: 'Le patient semble absent, intellectualise, change de sujet ou montre peu d\'affect.',
+    possibleCauses: [
+      'Protecteur Détaché actif — le patient se protège de la douleur émotionnelle',
+      'Hypo-activation : le patient est en-dessous de sa fenêtre de tolérance',
+      'Alliance thérapeutique insuffisante — le patient ne se sent pas en sécurité',
+    ],
+    suggestedActions: [
+      'Nommer le mode : « Je sens que le Protecteur Détaché est là en ce moment »',
+      'Activer les ressources (lieu sûr, animal d\'attachement)',
+      'Utiliser le corporel : respiration, ancrage sensoriel',
+      'Vérifier l\'alliance : « Comment vous sentez-vous avec moi en ce moment ? »',
+    ],
+  },
+  {
+    id: 'patient-submerge',
+    label: 'Le patient est submergé émotionnellement',
+    description: 'Pleurs intenses, dissociation, hyperventilation, sidération.',
+    possibleCauses: [
+      'Hyper-activation : le patient est au-dessus de sa fenêtre de tolérance',
+      'Trauma réactivé sans filet de sécurité suffisant',
+      'Ressources insuffisamment installées avant le travail émotionnel',
+    ],
+    suggestedActions: [
+      'STOP — ramener dans la fenêtre de tolérance immédiatement',
+      'Ancrage sensoriel : « Nommez 5 choses que vous voyez, 4 que vous touchez... »',
+      'Respiration guidée : inspirations courtes, expirations longues',
+      'Lieu sûr en imagerie si le patient peut fermer les yeux',
+      'Ne pas reprendre le travail émotionnel tant que le patient n\'est pas stabilisé',
+    ],
+  },
+  {
+    id: 'faux-progres',
+    label: 'Le patient semble progresser mais rien ne change',
+    description: 'Le patient est « bon patient », acquiesce, fait ses tâches, mais aucun changement réel dans sa vie.',
+    possibleCauses: [
+      'Mode Soumis Obéissant actif en séance — le patient reproduit son schéma avec le thérapeute',
+      'Travail purement cognitif sans accès émotionnel (« cognitions froides »)',
+      'Protecteur Détaché subtil — rationalisation sans affect',
+    ],
+    suggestedActions: [
+      'Confrontation empathique : « Je remarque que vous êtes d\'accord avec tout ce que je dis... »',
+      'Vérifier : y a-t-il de l\'émotion en séance ? Des pleurs ? De la colère ?',
+      'Passer à l\'imagerie ou au travail des chaises pour accéder aux émotions',
+      'Explorer : « Qu\'est-ce que vous n\'osez pas me dire ? »',
+    ],
+  },
+  {
+    id: 'resistance-imagerie',
+    label: 'Le patient refuse ou ne peut pas faire l\'imagerie',
+    description: 'Le patient dit qu\'il « ne voit rien », refuse de fermer les yeux, ou reste dans le contrôle.',
+    possibleCauses: [
+      'Protecteur Détaché ou Hypercontrôleur actif',
+      'Peur de perdre le contrôle (schéma de vulnérabilité)',
+      'Ressources insuffisantes — le patient ne se sent pas en sécurité',
+      'Trauma sévère avec dissociation — l\'imagerie peut être contre-indiquée temporairement',
+    ],
+    suggestedActions: [
+      'Installer les ressources d\'abord (lieu sûr, ancrage, animal d\'attachement)',
+      'Commencer par des images neutres ou agréables',
+      'Proposer les yeux ouverts si les yeux fermés sont trop anxiogènes',
+      'Utiliser le travail des chaises comme alternative',
+      'Respecter le rythme — ne pas forcer',
+    ],
+  },
+  {
+    id: 'rupture-alliance',
+    label: 'Rupture d\'alliance thérapeutique',
+    description: 'Le patient est en colère contre le thérapeute, veut arrêter, ou se ferme.',
+    possibleCauses: [
+      'Schéma du patient activé dans la relation thérapeutique (transfert schématique)',
+      'Confrontation trop précoce ou trop frontale',
+      'Schéma du thérapeute activé (contre-transfert schématique)',
+      'Limites thérapeutiques perçues comme rejet (schéma abandon)',
+    ],
+    suggestedActions: [
+      'Priorité : réparer la relation avant tout travail thérapeutique',
+      'Valider le vécu du patient : « Je comprends que vous soyez en colère/blessé »',
+      'Explorer le lien avec les schémas : « Est-ce que cette situation vous rappelle quelque chose ? »',
+      'Auto-révélation du thérapeute si appropriée',
+      'Supervision : explorer ses propres schémas activés',
+    ],
+  },
+  {
+    id: 'contre-transfert',
+    label: 'Difficultés de contre-transfert',
+    description: 'Le thérapeute se sent irrité, impuissant, épuisé ou « piégé » avec ce patient.',
+    possibleCauses: [
+      'Schémas du thérapeute activés par le patient',
+      'Mode Compensateur du patient qui provoque une lutte de pouvoir',
+      'Surcharge émotionnelle (trop de patients complexes)',
+      'Reparentage excessif sans limites → épuisement du thérapeute',
+    ],
+    suggestedActions: [
+      'Supervision immédiate (protocole « Gérer ses propres schémas »)',
+      'Identifier quel schéma personnel est activé',
+      'Se rappeler : la réaction du patient reflète ses modes, pas une attaque personnelle',
+      'Vérifier ses limites : horaires, disponibilité téléphonique, nombre de patients TP',
+    ],
+  },
+];
+
+// --- Schéma → Domaine (lookup rapide) ---
+
+const schemaToDomain: Record<string, string> = {
+  'abandon-instabilite': 'separation-rejet',
+  'mefiance-abus': 'separation-rejet',
+  'manque-affectif': 'separation-rejet',
+  'imperfection-honte': 'separation-rejet',
+  'isolement-social': 'separation-rejet',
+  'dependance-incompetence': 'manque-autonomie',
+  'peur-danger-maladie': 'manque-autonomie',
+  'fusionnement-personnalite-atrophiee': 'manque-autonomie',
+  'echec': 'manque-autonomie',
+  'droits-exageres': 'manque-limites',
+  'controle-soi-insuffisant': 'manque-limites',
+  'assujettissement': 'orientation-autres',
+  'abnegation': 'orientation-autres',
+  'recherche-approbation': 'orientation-autres',
+  'negativite-pessimisme': 'survigilance-inhibition',
+  'surcontrole-emotionnel': 'survigilance-inhibition',
+  'punition': 'survigilance-inhibition',
+  'ideaux-exigeants': 'survigilance-inhibition',
+};
+
+// ======================== FONCTION PRINCIPALE ========================
+
+export interface SessionProfile {
+  phaseId: string;
+  selectedModeIds: string[];
+  selectedSchemaIds: string[];
+  situationLibre?: string;
+}
+
+export function generateRecommendations(profile: SessionProfile): SessionRecommendation[] {
+  const recommendations: SessionRecommendation[] = [];
+  const addedIds = new Set<string>();
+
+  const addRec = (rec: SessionRecommendation) => {
+    if (!addedIds.has(rec.id)) {
+      addedIds.add(rec.id);
+      recommendations.push(rec);
+    }
+  };
+
+  // 1. Règles par mode (priorité la plus haute)
+  for (const modeId of profile.selectedModeIds) {
+    const rule = modeRules.find((r) => r.modeId === modeId);
+    if (!rule) continue;
+    addRec({
+      id: `mode-${modeId}`,
+      title: `Mode : ${rule.action.split('.')[0]}`,
+      description: rule.action,
+      priority: rule.priority,
+      techniqueIds: rule.techniqueIds,
+      protocolIds: rule.protocolIds,
+      pathwayStepIds: rule.pathwayStepIds,
+      warnings: rule.warnings,
+      source: `Règle de mode : ${modeId}`,
+    });
+  }
+
+  // 2. Règles par domaine (basées sur les schémas sélectionnés)
+  const activeDomains = new Set(
+    profile.selectedSchemaIds.map((sid) => schemaToDomain[sid]).filter(Boolean)
+  );
+  for (const domainId of activeDomains) {
+    const rule = domainRules.find((r) => r.domainId === domainId);
+    if (!rule) continue;
+    addRec({
+      id: `domain-${domainId}`,
+      title: `Priorité thérapeutique : ${rule.priorityCategories[0]} → ${rule.priorityCategories[1]}`,
+      description: rule.rationale,
+      priority: 'moyenne',
+      techniqueIds: [],
+      protocolIds: [],
+      pathwayStepIds: [],
+      warnings: [],
+      source: `Règle de domaine : ${domainId}`,
+    });
+  }
+
+  // 3. Règles par phase
+  const phaseRule = phaseRules.find((r) => r.phaseId === profile.phaseId);
+  if (phaseRule) {
+    const inappropriateTechniques = phaseRule.avoidTechniqueIds.filter((tid) =>
+      recommendations.some((r) => r.techniqueIds.includes(tid))
+    );
+    if (inappropriateTechniques.length > 0) {
+      addRec({
+        id: `phase-warning-${profile.phaseId}`,
+        title: `⚠️ Attention à la phase actuelle`,
+        description: phaseRule.notes,
+        priority: 'haute',
+        techniqueIds: phaseRule.primaryTechniqueIds,
+        protocolIds: [],
+        pathwayStepIds: [],
+        warnings: [
+          `En phase "${profile.phaseId}", certaines techniques recommandées par les modes sont normalement réservées à une phase ultérieure. Ajustez en fonction du contexte clinique.`,
+        ],
+        source: `Règle de phase : ${profile.phaseId}`,
+      });
+    } else {
+      addRec({
+        id: `phase-${profile.phaseId}`,
+        title: `Outils recommandés pour cette phase`,
+        description: phaseRule.notes,
+        priority: 'basse',
+        techniqueIds: phaseRule.primaryTechniqueIds,
+        protocolIds: [],
+        pathwayStepIds: [],
+        warnings: [],
+        source: `Règle de phase : ${profile.phaseId}`,
+      });
+    }
+  }
+
+  // 4. Règles de sévérité
+  for (const rule of severityRules) {
+    const disorderSchemaMap: Record<string, string[]> = {
+      borderline: ['abandon-instabilite', 'mefiance-abus', 'manque-affectif', 'imperfection-honte'],
+      narcissique: ['droits-exageres', 'manque-affectif', 'imperfection-honte'],
+      antisociale: ['mefiance-abus', 'droits-exageres', 'controle-soi-insuffisant'],
+    };
+
+    for (const disId of rule.disorderIds) {
+      const triggerSchemas = disorderSchemaMap[disId] || [];
+      const matchCount = profile.selectedSchemaIds.filter((s) =>
+        triggerSchemas.includes(s)
+      ).length;
+
+      if (matchCount >= 2) {
+        addRec({
+          id: `severity-${disId}`,
+          title: `🔴 ${rule.warning.split(':')[0]}`,
+          description: rule.warning,
+          priority: 'critique',
+          techniqueIds: rule.additionalTechniqueIds,
+          protocolIds: [],
+          pathwayStepIds: [],
+          warnings: [rule.warning],
+          source: `Règle de sévérité : ${disId}`,
+        });
+      }
+    }
+  }
+
+  // 5. Tri par priorité
+  const priorityOrder: Record<RecommendationPriority, number> = {
+    critique: 0,
+    haute: 1,
+    moyenne: 2,
+    basse: 3,
+  };
+
+  recommendations.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
+
+  return recommendations;
+}
+
+// ======================== PATHWAY RELEVANCE ========================
+
+export function getRelevantPathwaySteps(
+  profile: SessionProfile
+): { step: PathwayStep; relevance: 'high' | 'medium' | 'low' }[] {
+  const recommendations = generateRecommendations(profile);
+  const highlightedStepIds = new Set(
+    recommendations.flatMap((r) => r.pathwayStepIds)
+  );
+
+  return evToAsPathway.map((step) => {
+    if (highlightedStepIds.has(step.id)) {
+      return { step, relevance: 'high' as const };
+    }
+
+    const targetModeMatch = profile.selectedModeIds.some(
+      (mid) => step.targetMode.toLowerCase().includes(mid.replace(/-/g, ' '))
+    );
+    if (targetModeMatch) {
+      return { step, relevance: 'medium' as const };
+    }
+
+    return { step, relevance: 'low' as const };
+  });
+}

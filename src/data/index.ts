@@ -12,4 +12,17 @@ export {
   evToAsPathway,
   modeGuidances,
   clinicalProtocols,
+  blockedSituationDiagnoses,
+  generateRecommendations,
+  getRelevantPathwaySteps,
+} from './clinical-guide';
+export type {
+  SessionProfile,
+  SessionRecommendation,
+  RecommendationPriority,
+  BlockedSituationDiagnosis,
+  TherapyPhase,
+  PathwayStep,
+  ModeGuidance,
+  ClinicalProtocol,
 } from './clinical-guide';
