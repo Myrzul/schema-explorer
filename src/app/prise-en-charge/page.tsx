@@ -44,22 +44,22 @@ export default function PriseEnChargePage() {
   const [activeTab, setActiveTab] = useState<TabId>('parcours');
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      {/* Header */}
-      <div className="bg-white border-b border-slate-200 px-6 py-6">
-        <h1 className="text-2xl font-bold text-slate-800">
-          Prise en charge en Thérapie des Schémas
-        </h1>
-        <p className="text-sm text-slate-500 mt-1">
-          Guide clinique interactif — Phases, protocoles, techniques et
-          outils pour accompagner le patient de l&apos;Enfant Vulnérable vers
-          l&apos;Adulte Sain.
-        </p>
-      </div>
+    <div className="flex-1 overflow-y-auto">
+      <div className="max-w-4xl mx-auto px-6 py-10">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold text-slate-900 mb-2">
+            Prise en charge
+          </h1>
+          <p className="text-sm text-slate-500">
+            Guide clinique interactif — Phases, protocoles, techniques et
+            outils pour accompagner le patient de l&apos;Enfant Vulnérable vers
+            l&apos;Adulte Sain.
+          </p>
+        </div>
 
-      {/* Tab bar */}
-      <div className="bg-white border-b border-slate-200 px-6">
-        <div className="flex gap-1 overflow-x-auto py-2">
+        {/* Tabs */}
+        <div className="flex gap-1 rounded-lg bg-slate-100 p-1 mb-6">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const active = activeTab === tab.id;
@@ -67,22 +67,20 @@ export default function PriseEnChargePage() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
+                className={`flex items-center gap-1.5 px-4 py-2 rounded-md text-sm font-medium transition-colors flex-1 justify-center whitespace-nowrap ${
                   active
-                    ? 'bg-slate-800 text-white'
-                    : 'text-slate-500 hover:bg-slate-100 hover:text-slate-700'
+                    ? 'bg-white text-slate-900 shadow-sm'
+                    : 'text-slate-500 hover:text-slate-700'
                 }`}
               >
                 <Icon className="w-4 h-4" />
-                {tab.label}
+                <span className="hidden sm:inline">{tab.label}</span>
               </button>
             );
           })}
         </div>
-      </div>
 
-      {/* Content */}
-      <div className="max-w-6xl mx-auto px-6 py-8">
+        {/* Content */}
         {activeTab === 'parcours' && <ParcoursTab />}
         {activeTab === 'modes' && <ModesTab />}
         {activeTab === 'protocoles' && <ProtocolesTab />}
