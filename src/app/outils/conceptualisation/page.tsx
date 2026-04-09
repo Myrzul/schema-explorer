@@ -136,78 +136,92 @@ export default function ConceptualisationPage() {
     const esc = (s: string) => s.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const nl2br = (s: string) => esc(s).replace(/\n/g, '<br/>');
 
-    // Couleurs identiques au diagramme interactif
-    const c = {
-      exp: '#1E40AF',     // bleu
-      sch: '#b8453a',     // rouge brique
-      csq: '#854D0E',     // ambre
-      mod: '#5B21B6',     // violet
-      cpt: '#166534',     // vert
-      evt: '#9A3412',     // orange
-      emo: '#991B1B',     // rouge foncé
-      pen: '#7a4a9a',     // violet clair
+    // Hex → rgb pour pouvoir utiliser rgba() compatible print
+    const hex2rgb = (h: string) => {
+      const hex = h.replace('#', '');
+      const r = parseInt(hex.substring(0, 2), 16);
+      const g = parseInt(hex.substring(2, 4), 16);
+      const b = parseInt(hex.substring(4, 6), 16);
+      return `${r},${g},${b}`;
     };
 
-    const boxHtml = (color: string, title: string, content: string) =>
-      `<div class="box" style="border-color:${color}">
-        <div class="box-header" style="background:${color}12;border-bottom:1px solid ${color}30">
-          <div class="box-title" style="color:${color}">${title}</div>
+    // Couleurs identiques au diagramme interactif — [hex, rgb]
+    const colors: Record<string, { hex: string; rgb: string }> = {
+      exp: { hex: '#1E40AF', rgb: hex2rgb('#1E40AF') },
+      sch: { hex: '#b8453a', rgb: hex2rgb('#b8453a') },
+      csq: { hex: '#854D0E', rgb: hex2rgb('#854D0E') },
+      mod: { hex: '#5B21B6', rgb: hex2rgb('#5B21B6') },
+      cpt: { hex: '#166534', rgb: hex2rgb('#166534') },
+      evt: { hex: '#9A3412', rgb: hex2rgb('#9A3412') },
+      emo: { hex: '#991B1B', rgb: hex2rgb('#991B1B') },
+      pen: { hex: '#7a4a9a', rgb: hex2rgb('#7a4a9a') },
+    };
+
+    const boxHtml = (c: { hex: string; rgb: string }, title: string, content: string) =>
+      `<div class="box" style="border-color:${c.hex}">
+        <div class="box-header" style="background:rgba(${c.rgb},0.08);border-bottom:1px solid rgba(${c.rgb},0.2)">
+          <div class="box-title" style="color:${c.hex}">${title}</div>
         </div>
         <div class="box-content">${content || '&mdash;'}</div>
       </div>`;
 
+    // SVG arrow helpers
+    const svgArrowDown = `<svg width="20" height="24" viewBox="0 0 20 24" style="display:block;margin:0 auto"><path d="M10 0 L10 18 M4 13 L10 20 L16 13" stroke="#64748b" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+    const svgArrowUp = `<svg width="20" height="24" viewBox="0 0 20 24" style="display:block;margin:0 auto"><path d="M10 24 L10 6 M4 11 L10 4 L16 11" stroke="#64748b" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+    const svgArrowRight = `<svg width="28" height="20" viewBox="0 0 28 20" style="display:block;margin:auto"><path d="M0 10 L20 10 M15 4 L22 10 L15 16" stroke="#64748b" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+    const svgArrowLeft = `<svg width="28" height="20" viewBox="0 0 28 20" style="display:block;margin:auto"><path d="M28 10 L8 10 M13 4 L6 10 L13 16" stroke="#64748b" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
     const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Conceptualisation — ${esc(data.patientName || 'Patient')}</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:system-ui,-apple-system,sans-serif;margin:24px auto;max-width:780px;color:#333;font-size:12px;line-height:1.5}
+body{font-family:system-ui,-apple-system,sans-serif;margin:24px auto;max-width:780px;color:#333;font-size:12px;line-height:1.5;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 h1{font-size:18px;color:#b8453a;margin-bottom:2px}
 .meta{color:#666;font-size:11px;margin-bottom:18px}
-.row{display:flex;gap:14px;margin-bottom:4px}
+.row{display:flex;gap:12px;margin-bottom:4px}
 .col-left{flex:0 0 44%;min-width:0}
 .col-right{flex:0 0 54%;min-width:0}
 .box{border:2px solid #334155;border-radius:10px;background:white;overflow:hidden}
 .box-header{padding:6px 12px}
 .box-title{font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.4px}
 .box-content{font-size:11px;color:#444;line-height:1.55;padding:8px 12px;word-wrap:break-word;overflow-wrap:break-word}
-.arrow-row{display:flex;gap:14px;margin-bottom:4px}
-.arrow-row .col-left,.arrow-row .col-right{display:flex;justify-content:center}
-.arrow{text-align:center;color:#94a3b8;font-size:16px;line-height:1}
-.arrow-h{display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:16px;padding:0 4px;flex:0 0 2%}
+.arrow-row{display:flex;gap:12px;margin-bottom:4px}
+.arrow-row .col-left,.arrow-row .col-right{display:flex;justify-content:center;align-items:center}
+.arrow-h{display:flex;align-items:center;justify-content:center;padding:0 2px;flex:0 0 2%}
 .footer{margin-top:16px;padding-top:10px;border-top:1px solid #e2e8f0;font-size:9px;color:#94a3b8;text-align:center}
-@media print{body{margin:12px}@page{size:A4;margin:12mm}.footer{position:fixed;bottom:5mm;left:0;right:0}}
+@media print{body{margin:12px;-webkit-print-color-adjust:exact;print-color-adjust:exact}@page{size:A4;margin:12mm}}
 </style></head><body>
 <h1>Diagramme de Conceptualisation de Cas</h1>
 <p class="meta">${data.patientName ? `Patient : ${esc(data.patientName)} &mdash; ` : ''}Date : ${data.date}</p>
 
 <div class="row" style="align-items:stretch">
-  <div class="col-left">${boxHtml(c.exp, 'Exp\u00e9riences du pass\u00e9', nl2br(data.experiencesPassees))}</div>
-  <div class="arrow-h">&rarr;</div>
-  <div class="col-right">${boxHtml(c.sch, 'Sch\u00e9mas', nl2br(schemasText))}</div>
+  <div class="col-left">${boxHtml(colors.exp, 'Exp\u00e9riences du pass\u00e9', nl2br(data.experiencesPassees))}</div>
+  <div class="arrow-h">${svgArrowRight}</div>
+  <div class="col-right">${boxHtml(colors.sch, 'Sch\u00e9mas', nl2br(schemasText))}</div>
 </div>
 <div class="arrow-row">
-  <div class="col-left"><div class="arrow">&darr;</div></div>
-  <div class="col-right"><div class="arrow">&darr;</div></div>
+  <div class="col-left">${svgArrowDown}</div>
+  <div class="col-right">${svgArrowDown}</div>
 </div>
 <div class="row">
-  <div class="col-left">${boxHtml(c.csq, 'Cons\u00e9quences', nl2br(data.consequences))}</div>
-  <div class="col-right">${boxHtml(c.mod, 'Strat\u00e9gies / Modes', nl2br(strategiesText))}</div>
+  <div class="col-left">${boxHtml(colors.csq, 'Cons\u00e9quences', nl2br(data.consequences))}</div>
+  <div class="col-right">${boxHtml(colors.mod, 'Strat\u00e9gies / Modes', nl2br(strategiesText))}</div>
 </div>
 <div class="arrow-row">
-  <div class="col-left"><div class="arrow">&uarr;</div></div>
-  <div class="col-right"><div class="arrow">&darr;</div></div>
+  <div class="col-left">${svgArrowUp}</div>
+  <div class="col-right">${svgArrowDown}</div>
 </div>
 <div class="row">
-  <div class="col-left">${boxHtml(c.cpt, 'Comportements', nl2br(data.comportements))}</div>
-  <div class="col-right">${boxHtml(c.evt, '\u00c9v\u00e9nements d\u00e9clencheurs actuels', nl2br(data.evenementsDeclencheurs))}</div>
+  <div class="col-left">${boxHtml(colors.cpt, 'Comportements', nl2br(data.comportements))}</div>
+  <div class="col-right">${boxHtml(colors.evt, '\u00c9v\u00e9nements d\u00e9clencheurs actuels', nl2br(data.evenementsDeclencheurs))}</div>
 </div>
 <div class="arrow-row">
-  <div class="col-left"><div class="arrow">&uarr;</div></div>
-  <div class="col-right"><div class="arrow">&darr;</div></div>
+  <div class="col-left">${svgArrowUp}</div>
+  <div class="col-right">${svgArrowDown}</div>
 </div>
 <div class="row" style="align-items:stretch">
-  <div class="col-left">${boxHtml(c.emo, '\u00c9motions', nl2br(data.emotions))}</div>
-  <div class="arrow-h">&larr;</div>
-  <div class="col-right">${boxHtml(c.pen, 'Pens\u00e9es automatiques', nl2br(data.penseesAutomatiques))}</div>
+  <div class="col-left">${boxHtml(colors.emo, '\u00c9motions', nl2br(data.emotions))}</div>
+  <div class="arrow-h">${svgArrowLeft}</div>
+  <div class="col-right">${boxHtml(colors.pen, 'Pens\u00e9es automatiques', nl2br(data.penseesAutomatiques))}</div>
 </div>
 
 <div class="footer">SchemaExplorer &mdash; Diagramme de conceptualisation &mdash; Outil p\u00e9dagogique</div>
