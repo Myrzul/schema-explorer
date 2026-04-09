@@ -133,109 +133,108 @@ export default function ConceptualisationPage() {
   }, [data.selectedModeIds, data.strategiesLibre]);
 
   const handleDownloadPDF = () => {
-    const w = window.open('', '_blank');
-    if (!w) return;
     const esc = (s: string) => s.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const nl2br = (s: string) => esc(s).replace(/\n/g, '<br/>');
-    w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Conceptualisation — ${esc(data.patientName || 'Patient')}</title>
+
+    // Couleurs identiques au diagramme interactif
+    const c = {
+      exp: '#1E40AF',     // bleu
+      sch: '#b8453a',     // rouge brique
+      csq: '#854D0E',     // ambre
+      mod: '#5B21B6',     // violet
+      cpt: '#166534',     // vert
+      evt: '#9A3412',     // orange
+      emo: '#991B1B',     // rouge foncé
+      pen: '#7a4a9a',     // violet clair
+    };
+
+    const boxHtml = (color: string, title: string, content: string) =>
+      `<div class="box" style="border-color:${color}">
+        <div class="box-header" style="background:${color}12;border-bottom:1px solid ${color}30">
+          <div class="box-title" style="color:${color}">${title}</div>
+        </div>
+        <div class="box-content">${content || '&mdash;'}</div>
+      </div>`;
+
+    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Conceptualisation — ${esc(data.patientName || 'Patient')}</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:system-ui,-apple-system,sans-serif;margin:30px auto;max-width:780px;color:#333;font-size:12px;line-height:1.5}
+body{font-family:system-ui,-apple-system,sans-serif;margin:24px auto;max-width:780px;color:#333;font-size:12px;line-height:1.5}
 h1{font-size:18px;color:#b8453a;margin-bottom:2px}
-.meta{color:#666;font-size:11px;margin-bottom:20px}
-.row{display:flex;gap:16px;margin-bottom:6px}
-.row .col{flex:1;min-width:0}
-.row .col-left{flex:0 0 45%}
-.row .col-right{flex:0 0 53%}
-.box{border:2px solid #334155;border-radius:8px;padding:10px 12px;background:white;min-height:50px}
-.box-title{font-weight:700;font-size:11px;color:#334155;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.3px}
-.box-content{font-size:11px;color:#444;line-height:1.55;word-wrap:break-word;overflow-wrap:break-word}
-.arrow{text-align:center;color:#64748b;font-size:18px;line-height:1;padding:2px 0}
-.arrow-row{display:flex;gap:16px;margin-bottom:6px}
-.arrow-row .col{flex:1;display:flex;justify-content:center}
-.arrow-row .col-left{flex:0 0 45%}
-.arrow-row .col-right{flex:0 0 53%}
-.arrow-horiz{display:flex;align-items:center;justify-content:center;color:#64748b;font-size:14px;padding:0 4px}
-.top-row{display:flex;gap:0;margin-bottom:6px;align-items:stretch}
-.top-row .col-left{flex:0 0 45%}
-.top-row .arrow-horiz{flex:0 0 2%;display:flex;align-items:center;justify-content:center}
-.top-row .col-right{flex:0 0 53%}
-@media print{body{margin:15px}@page{size:A4;margin:15mm}}
+.meta{color:#666;font-size:11px;margin-bottom:18px}
+.row{display:flex;gap:14px;margin-bottom:4px}
+.col-left{flex:0 0 44%;min-width:0}
+.col-right{flex:0 0 54%;min-width:0}
+.box{border:2px solid #334155;border-radius:10px;background:white;overflow:hidden}
+.box-header{padding:6px 12px}
+.box-title{font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.4px}
+.box-content{font-size:11px;color:#444;line-height:1.55;padding:8px 12px;word-wrap:break-word;overflow-wrap:break-word}
+.arrow-row{display:flex;gap:14px;margin-bottom:4px}
+.arrow-row .col-left,.arrow-row .col-right{display:flex;justify-content:center}
+.arrow{text-align:center;color:#94a3b8;font-size:16px;line-height:1}
+.arrow-h{display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:16px;padding:0 4px;flex:0 0 2%}
+.footer{margin-top:16px;padding-top:10px;border-top:1px solid #e2e8f0;font-size:9px;color:#94a3b8;text-align:center}
+@media print{body{margin:12px}@page{size:A4;margin:12mm}.footer{position:fixed;bottom:5mm;left:0;right:0}}
 </style></head><body>
 <h1>Diagramme de Conceptualisation de Cas</h1>
 <p class="meta">${data.patientName ? `Patient : ${esc(data.patientName)} &mdash; ` : ''}Date : ${data.date}</p>
 
-<!-- Ligne 1 : Expériences → Schémas -->
-<div class="top-row">
-  <div class="col-left"><div class="box">
-    <div class="box-title">Exp\u00e9riences du pass\u00e9 :</div>
-    <div class="box-content">${nl2br(data.experiencesPassees) || '&mdash;'}</div>
-  </div></div>
-  <div class="arrow-horiz">&rarr;</div>
-  <div class="col-right"><div class="box">
-    <div class="box-title">Sch\u00e9mas :</div>
-    <div class="box-content">${nl2br(schemasText) || '&mdash;'}</div>
-  </div></div>
+<div class="row" style="align-items:stretch">
+  <div class="col-left">${boxHtml(c.exp, 'Exp\u00e9riences du pass\u00e9', nl2br(data.experiencesPassees))}</div>
+  <div class="arrow-h">&rarr;</div>
+  <div class="col-right">${boxHtml(c.sch, 'Sch\u00e9mas', nl2br(schemasText))}</div>
 </div>
-
-<!-- Flèches ↓ ↓ -->
 <div class="arrow-row">
-  <div class="col col-left"><div class="arrow">&darr;</div></div>
-  <div class="col col-right"><div class="arrow">&darr;</div></div>
+  <div class="col-left"><div class="arrow">&darr;</div></div>
+  <div class="col-right"><div class="arrow">&darr;</div></div>
 </div>
-
-<!-- Ligne 2 : Conséquences | Stratégies/Modes -->
 <div class="row">
-  <div class="col col-left"><div class="box">
-    <div class="box-title">Cons\u00e9quences :</div>
-    <div class="box-content">${nl2br(data.consequences) || '&mdash;'}</div>
-  </div></div>
-  <div class="col col-right"><div class="box">
-    <div class="box-title">Strat\u00e9gies / Modes :</div>
-    <div class="box-content">${nl2br(strategiesText) || '&mdash;'}</div>
-  </div></div>
+  <div class="col-left">${boxHtml(c.csq, 'Cons\u00e9quences', nl2br(data.consequences))}</div>
+  <div class="col-right">${boxHtml(c.mod, 'Strat\u00e9gies / Modes', nl2br(strategiesText))}</div>
 </div>
-
-<!-- Flèches ↑ ↓ -->
 <div class="arrow-row">
-  <div class="col col-left"><div class="arrow">&uarr;</div></div>
-  <div class="col col-right"><div class="arrow">&darr;</div></div>
+  <div class="col-left"><div class="arrow">&uarr;</div></div>
+  <div class="col-right"><div class="arrow">&darr;</div></div>
 </div>
-
-<!-- Ligne 3 : Comportements | Événements déclencheurs -->
 <div class="row">
-  <div class="col col-left"><div class="box">
-    <div class="box-title">Comportements :</div>
-    <div class="box-content">${nl2br(data.comportements) || '&mdash;'}</div>
-  </div></div>
-  <div class="col col-right"><div class="box">
-    <div class="box-title">\u00c9v\u00e9nements d\u00e9clencheurs actuels :</div>
-    <div class="box-content">${nl2br(data.evenementsDeclencheurs) || '&mdash;'}</div>
-  </div></div>
+  <div class="col-left">${boxHtml(c.cpt, 'Comportements', nl2br(data.comportements))}</div>
+  <div class="col-right">${boxHtml(c.evt, '\u00c9v\u00e9nements d\u00e9clencheurs actuels', nl2br(data.evenementsDeclencheurs))}</div>
 </div>
-
-<!-- Flèches ↑ ↓ -->
 <div class="arrow-row">
-  <div class="col col-left"><div class="arrow">&uarr;</div></div>
-  <div class="col col-right"><div class="arrow">&darr;</div></div>
+  <div class="col-left"><div class="arrow">&uarr;</div></div>
+  <div class="col-right"><div class="arrow">&darr;</div></div>
+</div>
+<div class="row" style="align-items:stretch">
+  <div class="col-left">${boxHtml(c.emo, '\u00c9motions', nl2br(data.emotions))}</div>
+  <div class="arrow-h">&larr;</div>
+  <div class="col-right">${boxHtml(c.pen, 'Pens\u00e9es automatiques', nl2br(data.penseesAutomatiques))}</div>
 </div>
 
-<!-- Ligne 4 : Émotions ← Pensées automatiques -->
-<div class="top-row">
-  <div class="col-left"><div class="box">
-    <div class="box-title">\u00c9motions :</div>
-    <div class="box-content">${nl2br(data.emotions) || '&mdash;'}</div>
-  </div></div>
-  <div class="arrow-horiz">&larr;</div>
-  <div class="col-right"><div class="box">
-    <div class="box-title">Pens\u00e9es automatiques :</div>
-    <div class="box-content">${nl2br(data.penseesAutomatiques) || '&mdash;'}</div>
-  </div></div>
-</div>
+<div class="footer">SchemaExplorer &mdash; Diagramme de conceptualisation &mdash; Outil p\u00e9dagogique</div>
+</body></html>`;
 
-<script>setTimeout(function(){window.print()},200)<\/script>
-</body></html>`);
-    w.document.close();
+    // Téléchargement direct via iframe caché (pas d'aperçu)
+    const iframe = document.createElement('iframe');
+    iframe.style.position = 'fixed';
+    iframe.style.left = '-9999px';
+    iframe.style.top = '-9999px';
+    iframe.style.width = '800px';
+    iframe.style.height = '1200px';
+    document.body.appendChild(iframe);
+
+    const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+    if (!iframeDoc) return;
+    iframeDoc.open();
+    iframeDoc.write(html);
+    iframeDoc.close();
+
+    setTimeout(() => {
+      iframe.contentWindow?.print();
+      // Nettoyage après fermeture de la boîte d'impression
+      setTimeout(() => {
+        document.body.removeChild(iframe);
+      }, 1000);
+    }, 300);
   };
 
   return (
