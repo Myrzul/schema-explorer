@@ -171,11 +171,11 @@ export default function ConceptualisationPage() {
     const svgArrowRight = `<svg width="28" height="20" viewBox="0 0 28 20" style="display:block;margin:auto"><path d="M0 10 L20 10 M15 4 L22 10 L15 16" stroke="#64748b" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
     const svgArrowLeft = `<svg width="28" height="20" viewBox="0 0 28 20" style="display:block;margin:auto"><path d="M28 10 L8 10 M13 4 L6 10 L13 16" stroke="#64748b" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
-    // SVG diagonal arrow: Conséquences ↗ Schémas (feedback loop)
-    const svgArrowDiag = `<svg width="100%" height="28" viewBox="0 0 200 28" preserveAspectRatio="xMidYMid meet" style="display:block">
+    // SVG diagonal arrow: Conséquences ↗ Schémas (feedback loop) — goes from bottom-left UP to top-right
+    const svgArrowDiag = `<svg width="100%" height="32" viewBox="0 0 200 32" preserveAspectRatio="xMidYMid meet" style="display:block">
       <defs><marker id="ah" viewBox="0 0 10 7" refX="9" refY="3.5" markerWidth="7" markerHeight="5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#64748b"/></marker></defs>
-      <path d="M 30 22 Q 100 4 170 6" stroke="#64748b" stroke-width="2" fill="none" stroke-dasharray="5,3" marker-end="url(#ah)" stroke-linecap="round"/>
-      <text x="100" y="26" text-anchor="middle" font-size="8" fill="#94a3b8" font-style="italic">renforce</text>
+      <path d="M 40 28 C 80 8, 130 4, 170 6" stroke="#64748b" stroke-width="2" fill="none" stroke-dasharray="5,3" marker-end="url(#ah)" stroke-linecap="round"/>
+      <text x="108" y="24" text-anchor="middle" font-size="7.5" fill="#94a3b8" font-style="italic">renforce</text>
     </svg>`;
 
     const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Conceptualisation — ${esc(data.patientName || 'Patient')}</title>
@@ -210,13 +210,13 @@ h1{font-size:18px;color:#b8453a;margin-bottom:2px}
   <div class="ca"></div>
   <div class="c2" style="text-align:center">${svgArrowDown}</div>
 </div>
+<div class="g2">
+  <div class="full">${svgArrowDiag}</div>
+</div>
 <div class="g">
   <div class="c1">${boxHtml(colors.csq, 'Cons\u00e9quences', nl2br(data.consequences))}</div>
   <div class="ca"></div>
   <div class="c2">${boxHtml(colors.mod, 'Strat\u00e9gies / Modes', nl2br(strategiesText))}</div>
-</div>
-<div class="g2">
-  <div class="full">${svgArrowDiag}</div>
 </div>
 <div class="g2">
   <div class="c1" style="text-align:center">${svgArrowUp}</div>
