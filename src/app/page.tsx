@@ -16,18 +16,18 @@ const sections = [
     accent: "bg-sky-50 border-sky-200 hover:border-sky-300",
   },
   {
-    title: "Simulateur de Cascade",
-    description:
-      "Simulez la cascade schématique : partez d'une situation activante et observez l'enchaînement schéma, mode, coping et comportement.",
-    href: "/cascade",
-    accent: "bg-violet-50 border-violet-200 hover:border-violet-300",
-  },
-  {
     title: "Fiches Détaillées",
     description:
-      "Consultez les fiches descriptives de chaque schéma, mode et stratégie de coping avec exemples cliniques et critères diagnostiques.",
+      "Consultez les fiches descriptives de chaque schéma, mode, trouble de la personnalité et technique avec exemples cliniques.",
     href: "/fiches",
     accent: "bg-emerald-50 border-emerald-200 hover:border-emerald-300",
+  },
+  {
+    title: "Prise en charge",
+    description:
+      "Guide clinique interactif : phases de thérapie, protocoles pas-à-pas, parcours EV → Adulte Sain, travail par mode et 25 techniques.",
+    href: "/prise-en-charge",
+    accent: "bg-violet-50 border-violet-200 hover:border-violet-300",
   },
   {
     title: "Outils & Questionnaires",

@@ -9,8 +9,8 @@ import SearchDialog from "./SearchDialog";
 
 const navItems = [
   { label: "Carte", href: "/carte" },
-  { label: "Cascade", href: "/cascade" },
   { label: "Fiches", href: "/fiches" },
+  { label: "Prise en charge", href: "/prise-en-charge" },
   { label: "Outils", href: "/outils" },
 ];
 

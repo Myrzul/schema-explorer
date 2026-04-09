@@ -7,3 +7,9 @@ export { disorders } from './disorders';
 export { relationships } from './relationships';
 export { cascades } from './cascades';
 export { techniques, techniqueCategories } from './techniques';
+export {
+  therapyPhases,
+  evToAsPathway,
+  modeGuidances,
+  clinicalProtocols,
+} from './clinical-guide';
