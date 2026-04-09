@@ -171,57 +171,72 @@ export default function ConceptualisationPage() {
     const svgArrowRight = `<svg width="28" height="20" viewBox="0 0 28 20" style="display:block;margin:auto"><path d="M0 10 L20 10 M15 4 L22 10 L15 16" stroke="#64748b" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
     const svgArrowLeft = `<svg width="28" height="20" viewBox="0 0 28 20" style="display:block;margin:auto"><path d="M28 10 L8 10 M13 4 L6 10 L13 16" stroke="#64748b" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
+    // SVG diagonal arrow: Conséquences ↗ Schémas (feedback loop)
+    const svgArrowDiag = `<svg width="100%" height="28" viewBox="0 0 200 28" preserveAspectRatio="xMidYMid meet" style="display:block">
+      <defs><marker id="ah" viewBox="0 0 10 7" refX="9" refY="3.5" markerWidth="7" markerHeight="5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#64748b"/></marker></defs>
+      <path d="M 30 22 Q 100 4 170 6" stroke="#64748b" stroke-width="2" fill="none" stroke-dasharray="5,3" marker-end="url(#ah)" stroke-linecap="round"/>
+      <text x="100" y="26" text-anchor="middle" font-size="8" fill="#94a3b8" font-style="italic">renforce</text>
+    </svg>`;
+
     const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Conceptualisation — ${esc(data.patientName || 'Patient')}</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:system-ui,-apple-system,sans-serif;margin:24px auto;max-width:780px;color:#333;font-size:12px;line-height:1.5;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 h1{font-size:18px;color:#b8453a;margin-bottom:2px}
 .meta{color:#666;font-size:11px;margin-bottom:18px}
-.row{display:flex;gap:12px;margin-bottom:4px}
-.col-left{flex:0 0 44%;min-width:0}
-.col-right{flex:0 0 54%;min-width:0}
+.g{display:grid;grid-template-columns:42% 24px 1fr;gap:4px 0;align-items:stretch;margin-bottom:4px}
+.g2{display:grid;grid-template-columns:42% 24px 1fr;gap:4px 0;align-items:center;margin-bottom:4px}
+.c1{grid-column:1}
+.ca{grid-column:2;display:flex;align-items:center;justify-content:center}
+.c2{grid-column:3}
 .box{border:2px solid #334155;border-radius:10px;background:white;overflow:hidden}
 .box-header{padding:6px 12px}
 .box-title{font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.4px}
 .box-content{font-size:11px;color:#444;line-height:1.55;padding:8px 12px;word-wrap:break-word;overflow-wrap:break-word}
-.arrow-row{display:flex;gap:12px;margin-bottom:4px}
-.arrow-row .col-left,.arrow-row .col-right{display:flex;justify-content:center;align-items:center}
-.arrow-h{display:flex;align-items:center;justify-content:center;padding:0 2px;flex:0 0 2%}
+.full{grid-column:1/-1}
 .footer{margin-top:16px;padding-top:10px;border-top:1px solid #e2e8f0;font-size:9px;color:#94a3b8;text-align:center}
 @media print{body{margin:12px;-webkit-print-color-adjust:exact;print-color-adjust:exact}@page{size:A4;margin:12mm}}
 </style></head><body>
 <h1>Diagramme de Conceptualisation de Cas</h1>
 <p class="meta">${data.patientName ? `Patient : ${esc(data.patientName)} &mdash; ` : ''}Date : ${data.date}</p>
 
-<div class="row" style="align-items:stretch">
-  <div class="col-left">${boxHtml(colors.exp, 'Exp\u00e9riences du pass\u00e9', nl2br(data.experiencesPassees))}</div>
-  <div class="arrow-h">${svgArrowRight}</div>
-  <div class="col-right">${boxHtml(colors.sch, 'Sch\u00e9mas', nl2br(schemasText))}</div>
+<div class="g">
+  <div class="c1">${boxHtml(colors.exp, 'Exp\u00e9riences du pass\u00e9', nl2br(data.experiencesPassees))}</div>
+  <div class="ca">${svgArrowRight}</div>
+  <div class="c2">${boxHtml(colors.sch, 'Sch\u00e9mas', nl2br(schemasText))}</div>
 </div>
-<div class="arrow-row">
-  <div class="col-left">${svgArrowDown}</div>
-  <div class="col-right">${svgArrowDown}</div>
+<div class="g2">
+  <div class="c1" style="text-align:center">${svgArrowDown}</div>
+  <div class="ca"></div>
+  <div class="c2" style="text-align:center">${svgArrowDown}</div>
 </div>
-<div class="row">
-  <div class="col-left">${boxHtml(colors.csq, 'Cons\u00e9quences', nl2br(data.consequences))}</div>
-  <div class="col-right">${boxHtml(colors.mod, 'Strat\u00e9gies / Modes', nl2br(strategiesText))}</div>
+<div class="g">
+  <div class="c1">${boxHtml(colors.csq, 'Cons\u00e9quences', nl2br(data.consequences))}</div>
+  <div class="ca"></div>
+  <div class="c2">${boxHtml(colors.mod, 'Strat\u00e9gies / Modes', nl2br(strategiesText))}</div>
 </div>
-<div class="arrow-row">
-  <div class="col-left">${svgArrowUp}</div>
-  <div class="col-right">${svgArrowDown}</div>
+<div class="g2">
+  <div class="full">${svgArrowDiag}</div>
 </div>
-<div class="row">
-  <div class="col-left">${boxHtml(colors.cpt, 'Comportements', nl2br(data.comportements))}</div>
-  <div class="col-right">${boxHtml(colors.evt, '\u00c9v\u00e9nements d\u00e9clencheurs actuels', nl2br(data.evenementsDeclencheurs))}</div>
+<div class="g2">
+  <div class="c1" style="text-align:center">${svgArrowUp}</div>
+  <div class="ca"></div>
+  <div class="c2" style="text-align:center">${svgArrowDown}</div>
 </div>
-<div class="arrow-row">
-  <div class="col-left">${svgArrowUp}</div>
-  <div class="col-right">${svgArrowDown}</div>
+<div class="g">
+  <div class="c1">${boxHtml(colors.cpt, 'Comportements', nl2br(data.comportements))}</div>
+  <div class="ca"></div>
+  <div class="c2">${boxHtml(colors.evt, '\u00c9v\u00e9nements d\u00e9clencheurs actuels', nl2br(data.evenementsDeclencheurs))}</div>
 </div>
-<div class="row" style="align-items:stretch">
-  <div class="col-left">${boxHtml(colors.emo, '\u00c9motions', nl2br(data.emotions))}</div>
-  <div class="arrow-h">${svgArrowLeft}</div>
-  <div class="col-right">${boxHtml(colors.pen, 'Pens\u00e9es automatiques', nl2br(data.penseesAutomatiques))}</div>
+<div class="g2">
+  <div class="c1" style="text-align:center">${svgArrowUp}</div>
+  <div class="ca"></div>
+  <div class="c2" style="text-align:center">${svgArrowDown}</div>
+</div>
+<div class="g">
+  <div class="c1">${boxHtml(colors.emo, '\u00c9motions', nl2br(data.emotions))}</div>
+  <div class="ca">${svgArrowLeft}</div>
+  <div class="c2">${boxHtml(colors.pen, 'Pens\u00e9es automatiques', nl2br(data.penseesAutomatiques))}</div>
 </div>
 
 <div class="footer">SchemaExplorer &mdash; Diagramme de conceptualisation &mdash; Outil p\u00e9dagogique</div>
