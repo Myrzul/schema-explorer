@@ -25,9 +25,16 @@ const sections = [
   {
     title: "Prise en charge",
     description:
-      "Guide clinique interactif : phases de thérapie, protocoles pas-à-pas, parcours EV → Adulte Sain, travail par mode et 25 techniques.",
+      "Guide clinique : phases de thérapie, protocoles pas-à-pas, parcours EV → Adulte Sain, travail par mode et 25 techniques.",
     href: "/prise-en-charge",
     accent: "bg-violet-50 border-violet-200 hover:border-violet-300",
+  },
+  {
+    title: "Assistant de séance",
+    description:
+      "Configurez le profil de votre patient (modes, schémas, phase) et obtenez des recommandations thérapeutiques personnalisées.",
+    href: "/assistant",
+    accent: "bg-fuchsia-50 border-fuchsia-200 hover:border-fuchsia-300",
   },
   {
     title: "Outils & Questionnaires",
@@ -59,7 +66,7 @@ export default function Home() {
       </section>
 
       {/* Section cards */}
-      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl w-full">
+      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl w-full">
         {sections.map((section) => (
           <Link key={section.href} href={section.href} className="group">
             <Card

@@ -11,6 +11,7 @@ const navItems = [
   { label: "Carte", href: "/carte" },
   { label: "Fiches", href: "/fiches" },
   { label: "Prise en charge", href: "/prise-en-charge" },
+  { label: "Assistant", href: "/assistant" },
   { label: "Outils", href: "/outils" },
 ];
 

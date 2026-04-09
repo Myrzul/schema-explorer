@@ -603,7 +603,7 @@ export const clinicalProtocols: ClinicalProtocol[] = [
 
 // --- Types ---
 
-export type RecommendationPriority = 'critique' | 'haute' | 'moyenne' | 'basse';
+export type RecommendationPriority = 'recommande' | 'haute' | 'moyenne' | 'basse';
 
 export interface SessionRecommendation {
   id: string;
@@ -681,7 +681,7 @@ interface ModeRule {
 const modeRules: ModeRule[] = [
   {
     modeId: 'protecteur-detache',
-    priority: 'critique',
+    priority: 'recommande',
     action: 'TOUJOURS activer les ressources en premier. Le Protecteur Détaché bloque tout accès émotionnel — aucune reconsolidation n\'est possible tant qu\'il est actif.',
     techniqueIds: ['confrontation-empathique', 're-parentage-partiel'],
     protocolIds: ['activation-ressources'],
@@ -694,7 +694,7 @@ const modeRules: ModeRule[] = [
   },
   {
     modeId: 'enfant-vulnerable',
-    priority: 'critique',
+    priority: 'recommande',
     action: 'Reparentage en imagerie. C\'est le mode où la guérison se produit — l\'objectif est d\'y accéder et d\'y rester.',
     techniqueIds: ['reparentage-imagerie', 'dialogues-imagerie', 'travail-chaises'],
     protocolIds: ['reparentage-imagerie'],
@@ -720,7 +720,7 @@ const modeRules: ModeRule[] = [
   },
   {
     modeId: 'parent-punitif',
-    priority: 'critique',
+    priority: 'recommande',
     action: 'Confrontation OBLIGATOIRE. Le thérapeute doit se montrer ferme et protecteur — la faute incombait à l\'adulte, pas à l\'enfant.',
     techniqueIds: ['travail-chaises', 'dialogues-imagerie', 'confrontation-empathique'],
     protocolIds: ['confronter-parent-punitif'],
@@ -845,36 +845,6 @@ const phaseRules: PhaseRule[] = [
     primaryTechniqueIds: ['lettres-parents', 'enregistrement-pensees', 'taches-assignees', 'activites-ressource'],
     avoidTechniqueIds: [],
     notes: 'Renforcer l\'Adulte Sain. Espacement progressif des séances.',
-  },
-];
-
-// --- Règles de sévérité (trouble TP) ---
-
-interface SeverityRule {
-  disorderIds: string[];
-  forceModesFirst: boolean;
-  warning: string;
-  additionalTechniqueIds: string[];
-}
-
-const severityRules: SeverityRule[] = [
-  {
-    disorderIds: ['borderline'],
-    forceModesFirst: true,
-    warning: 'Sévérité haute — Trouble Borderline : privilégier l\'approche par modes. Stabiliser la relation thérapeutique et les ressources AVANT le travail émotionnel profond.',
-    additionalTechniqueIds: ['activites-ressource', 're-parentage-partiel'],
-  },
-  {
-    disorderIds: ['narcissique'],
-    forceModesFirst: true,
-    warning: 'Sévérité haute — Trouble Narcissique : approche par modes obligatoire. Le Compensateur / Auto-Magnificateur protège un Enfant Vulnérable — construire l\'alliance avant de confronter.',
-    additionalTechniqueIds: ['confrontation-empathique'],
-  },
-  {
-    disorderIds: ['antisociale'],
-    forceModesFirst: true,
-    warning: 'Sévérité haute — Trouble Antisocial : approche par modes avec cadrage ferme. Attention au contre-transfert et aux tentatives de manipulation.',
-    additionalTechniqueIds: ['confrontation-empathique'],
   },
 ];
 
@@ -1100,39 +1070,9 @@ export function generateRecommendations(profile: SessionProfile): SessionRecomme
     }
   }
 
-  // 4. Règles de sévérité
-  for (const rule of severityRules) {
-    const disorderSchemaMap: Record<string, string[]> = {
-      borderline: ['abandon-instabilite', 'mefiance-abus', 'manque-affectif', 'imperfection-honte'],
-      narcissique: ['droits-exageres', 'manque-affectif', 'imperfection-honte'],
-      antisociale: ['mefiance-abus', 'droits-exageres', 'controle-soi-insuffisant'],
-    };
-
-    for (const disId of rule.disorderIds) {
-      const triggerSchemas = disorderSchemaMap[disId] || [];
-      const matchCount = profile.selectedSchemaIds.filter((s) =>
-        triggerSchemas.includes(s)
-      ).length;
-
-      if (matchCount >= 2) {
-        addRec({
-          id: `severity-${disId}`,
-          title: `🔴 ${rule.warning.split(':')[0]}`,
-          description: rule.warning,
-          priority: 'critique',
-          techniqueIds: rule.additionalTechniqueIds,
-          protocolIds: [],
-          pathwayStepIds: [],
-          warnings: [rule.warning],
-          source: `Règle de sévérité : ${disId}`,
-        });
-      }
-    }
-  }
-
-  // 5. Tri par priorité
+  // 4. Tri par priorité
   const priorityOrder: Record<RecommendationPriority, number> = {
-    critique: 0,
+    recommande: 0,
     haute: 1,
     moyenne: 2,
     basse: 3,
