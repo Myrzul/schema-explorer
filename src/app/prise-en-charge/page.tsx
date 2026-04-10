@@ -18,6 +18,7 @@ import {
   Play,
   UserCog,
   Stethoscope,
+  Download,
 } from 'lucide-react';
 import {
   therapyPhases,
@@ -515,6 +516,25 @@ const categoryIcons: Record<string, React.ReactNode> = {
 function TechniquesGroupedView() {
   return (
     <div className="space-y-8">
+      {/* Fiche Mémo-Flash download */}
+      <div className="rounded-xl border border-amber-200 bg-amber-50/50 p-4 flex items-center justify-between gap-4">
+        <div>
+          <h3 className="font-semibold text-sm text-amber-900">Fiche « Mémo-Flash »</h3>
+          <p className="text-xs text-amber-700 mt-0.5">
+            Fiche à remplir en séance ou entre les séances : situation actuelle, identification du schéma, mise à l&apos;épreuve de la réalité, instruction comportementale.
+          </p>
+          <p className="text-[10px] text-amber-500 mt-1">Young, Wattenmaker &amp; Wattenmaker (1996)</p>
+        </div>
+        <a
+          href="/fiche-memo-flash.pdf"
+          download
+          className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-amber-600 text-white text-xs font-medium hover:bg-amber-700 transition-colors shrink-0"
+        >
+          <Download className="w-3.5 h-3.5" />
+          Télécharger PDF
+        </a>
+      </div>
+
       {techniqueCategories.map((cat) => {
         const catTechniques = techniques.filter((t) => t.categoryId === cat.id);
         if (catTechniques.length === 0) return null;

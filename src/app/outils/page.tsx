@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ClipboardList, Brain, FileText } from 'lucide-react';
+import { ClipboardList, Brain, FileText, Zap } from 'lucide-react';
 
 const tools = [
   {
@@ -34,6 +34,16 @@ const tools = [
     bgColor: '#fef2f0',
     href: '/outils/conceptualisation',
   },
+  {
+    id: 'memo-flash',
+    name: 'Fiche Mémo-Flash',
+    subtitle: 'Young, Wattenmaker & Wattenmaker (1996)',
+    description: 'Fiche à remplir en séance ou entre les séances : identification du schéma, mise à l\'épreuve de la réalité et instruction comportementale.',
+    icon: <Zap className="w-6 h-6" />,
+    color: '#D97706',
+    bgColor: '#FFFBEB',
+    href: '/fiche-memo-flash.pdf',
+  },
 ];
 
 export default function OutilsPage() {
@@ -48,8 +58,9 @@ export default function OutilsPage() {
         </div>
 
         <div className="grid gap-4">
-          {tools.map((tool) => (
-            <Link key={tool.id} href={tool.href} className="group">
+          {tools.map((tool) => {
+            const isPdf = tool.href.endsWith('.pdf');
+            const card = (
               <div className="rounded-xl border border-slate-200 bg-white p-5 hover:border-slate-300 hover:shadow-sm transition-all">
                 <div className="flex items-start gap-4">
                   <div
@@ -67,8 +78,17 @@ export default function OutilsPage() {
                   </div>
                 </div>
               </div>
-            </Link>
-          ))}
+            );
+            return isPdf ? (
+              <a key={tool.id} href={tool.href} download className="group">
+                {card}
+              </a>
+            ) : (
+              <Link key={tool.id} href={tool.href} className="group">
+                {card}
+              </Link>
+            );
+          })}
         </div>
       </div>
     </div>
