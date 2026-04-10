@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ClipboardList, Brain, FileText, Zap } from 'lucide-react';
+import { ClipboardList, Brain, FileText, Zap, ExternalLink, Stethoscope } from 'lucide-react';
 
 const tools = [
   {
@@ -57,6 +57,26 @@ export default function OutilsPage() {
           </p>
         </div>
 
+        {/* Toutes les techniques */}
+        <Link href="/prise-en-charge" className="group block mb-6">
+          <div className="rounded-xl border border-fuchsia-200 bg-fuchsia-50/50 p-5 hover:border-fuchsia-300 hover:shadow-sm transition-all">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 bg-fuchsia-100 text-fuchsia-600">
+                <Stethoscope className="w-6 h-6" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <h2 className="font-bold text-slate-800">Toutes les techniques</h2>
+                  <span className="text-xs text-slate-400">25 techniques thérapeutiques</span>
+                </div>
+                <p className="text-sm text-slate-500 leading-relaxed">
+                  Techniques émotionnelles, cognitives, comportementales et relationnelles utilisées en thérapie des schémas.
+                </p>
+              </div>
+            </div>
+          </div>
+        </Link>
+
         <div className="grid gap-4">
           {tools.map((tool) => {
             const isPdf = tool.href.endsWith('.pdf');
@@ -89,6 +109,20 @@ export default function OutilsPage() {
               </Link>
             );
           })}
+        </div>
+
+        {/* CEFTI resources */}
+        <div className="mt-8 rounded-xl border border-slate-200 bg-slate-50 p-5">
+          <p className="text-sm text-slate-600 mb-2">Pour découvrir plus d&apos;outils…</p>
+          <a
+            href="https://cefti.fr/ressources-therapie-des-schemas/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors"
+          >
+            Ressources du CEFTI — Thérapie des schémas
+            <ExternalLink className="w-3.5 h-3.5" />
+          </a>
         </div>
       </div>
     </div>
