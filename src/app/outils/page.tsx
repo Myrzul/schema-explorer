@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ClipboardList, Brain, FileText, Zap, ExternalLink, Stethoscope } from 'lucide-react';
+import { ClipboardList, Brain, FileText, Zap, ExternalLink, Stethoscope, LayoutGrid } from 'lucide-react';
 
 const tools = [
   {
@@ -43,6 +43,16 @@ const tools = [
     color: '#D97706',
     bgColor: '#FFFBEB',
     href: '/fiche-memo-flash.pdf',
+  },
+  {
+    id: 'conceptualisation-alternative',
+    name: 'Conceptualisation des cas (alternative)',
+    subtitle: 'Tableau à remplir — Approche par modes',
+    description: 'Diagramme alternatif de conceptualisation par modes : modes intégrés, critiques, réponse émotionnelle et modes d\'adaptation. Format PDF à imprimer.',
+    icon: <LayoutGrid className="w-6 h-6" />,
+    color: '#1D4ED8',
+    bgColor: '#EFF6FF',
+    href: '/conceptualisation-alternative.pdf',
   },
 ];
 

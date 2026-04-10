@@ -401,6 +401,174 @@ function ProtocolesTab() {
       {therapeuticProtocols.map((protocol) => (
         <ProtocolCard key={protocol.id} protocol={protocol} />
       ))}
+
+      {/* Protocole ImRe alternatif — Dr Pascal */}
+      <div className="mt-6">
+        <ExpandableCard
+          header={
+            <div className="flex items-center gap-3 flex-wrap">
+              <BookOpen className="w-4 h-4 text-indigo-500" />
+              <span className="font-semibold text-slate-800 text-sm">
+                Reparentage en imagerie (ImRe) — Protocole alternatif détaillé
+              </span>
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 font-medium">
+                Changement
+              </span>
+            </div>
+          }
+        >
+          <div className="space-y-4 text-sm">
+            {/* Warning Dr Pascal */}
+            <div className="rounded-lg border-2 border-red-300 bg-red-50 p-3">
+              <div className="flex items-start gap-2">
+                <AlertTriangle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-xs text-red-800 font-semibold">
+                    Ce protocole détaillé est une version du Dr Pascal. Il ne s&apos;agit pas du protocole original du Dr Young.
+                  </p>
+                  <p className="text-[11px] text-red-600 mt-1">
+                    Le protocole est présenté à titre indicatif. La version intégrale avec verbatim clinique est issue de Roediger, Young &amp; EBP.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <p className="text-slate-600 leading-relaxed">
+              Version détaillée du reparentage en imagerie avec verbatim clinique pour chaque étape.
+              4 phases, 11 étapes — de l&apos;activation émotionnelle à l&apos;intégration.
+            </p>
+
+            {/* Phase I */}
+            <div>
+              <h4 className="text-[11px] font-bold uppercase text-indigo-700 mb-2 border-b border-indigo-100 pb-1">
+                Phase I — Activation et Pont Affectif (Diagnostic)
+              </h4>
+              <div className="space-y-2">
+                <ImReStep num="1" title="Entrée dans la scène actuelle" items={[
+                  { label: 'Immersion sensorielle', text: '« Fermez les yeux et concentrez toute votre attention sur cet instant. Que voyez-vous ? Qu\'entendez-vous ? Y a-t-il une odeur ou un goût particulier ? »' },
+                  { label: 'Focus émotionnel', text: '« Quelle émotion ressentez-vous ? Où, dans votre corps, ressentez-vous cette émotion ? »' },
+                  { label: 'Intensification (Slow Motion)', text: '« Laissez l\'image bouger. Est-ce que les sentiments s\'intensifient ? Repassons le moment le plus difficile au ralenti. Que ressentez-vous dans votre poitrine et votre estomac ? »' },
+                ]} />
+                <ImReStep num="2" title="Le Pont Somatique (Float-back)" items={[
+                  { label: 'Instruction de transition', text: '« Laissez l\'image s\'estomper, tournez votre attention vers l\'intérieur. Laissez-vous couler dans ces sensations physiques… laissez-vous dériver dans le temps vers votre adolescence ou votre enfance. »' },
+                  { label: 'Induction', text: '« Ouvrez-vous aux images qui viennent. Notre esprit a toujours des images. Quelle scène surgit maintenant ? Dites-moi ce qui vient sans essayer d\'analyser. »' },
+                ]} />
+              </div>
+            </div>
+
+            {/* Phase II */}
+            <div>
+              <h4 className="text-[11px] font-bold uppercase text-indigo-700 mb-2 border-b border-indigo-100 pb-1">
+                Phase II — Exploration de la Scène d&apos;Enfance &amp; Mode Awareness
+              </h4>
+              <div className="space-y-2">
+                <ImReStep num="3" title="Arrivée dans la scène d'origine" items={[
+                  { label: 'Détails', text: '« Dans quelle scène es-tu ? Quel âge as-tu ? Que vois-tu ? Donne-moi des détails. Que penses-tu à ce moment-là ? Quel est ton élan, ton impulsion ? »' },
+                  { label: 'Mode Awareness (Mise en attente)', text: '« Tout est en pause maintenant. Tu as la télécommande dans la main. Rien ne se passe, tu as le plein contrôle. Reste en contact avec ce que tu ressens. C\'est ici que se trouve ta blessure, c\'est ton schéma. »' },
+                ]} />
+                <ImReStep num="4" title="Gestion de la Dissociation (Si nécessaire)" items={[
+                  { label: 'Verbatim de rappel', text: '« Ouvre les yeux. Serre mes mains. Si tu sens ma main et entends ma voix, c\'est que nous sommes ICI et MAINTENANT. Ce que tu vois est une image ancienne. Viens ici avec moi. Tu es en sécurité. »' },
+                ]} />
+              </div>
+            </div>
+
+            {/* Phase IIIa */}
+            <div>
+              <h4 className="text-[11px] font-bold uppercase text-indigo-700 mb-2 border-b border-indigo-100 pb-1">
+                Phase IIIa — Reparentage par le Thérapeute (Script 1)
+              </h4>
+              <div className="space-y-2">
+                <ImReStep num="5" title="Entrée et Confrontation de l'Offenseur" items={[
+                  { label: 'Permission', text: '« Est-ce que tu m\'autorises à entrer dans l\'image et à tutoyer l\'enfant ? Ok, je vais être maintenant la personne dont tu avais besoin ! »' },
+                  { label: 'Confrontation (vers la chaise vide)', text: '« Ce que vous faites n\'est pas juste et n\'aide pas [Nom]. C\'est un enfant normal ! Rien ne cloche chez lui. Vous n\'avez pas le droit de le traiter ainsi. Vous violez ses besoins et vous le blessez profondément. »' },
+                ]} />
+                <ImReStep num="6" title="Réaction à l'Offenseur (Si celui-ci résiste)" items={[
+                  { label: 'Verbatim', text: '« Votre réaction révèle que vous ne savez pas ce qu\'est un enfant. Vous êtes absorbé par vous-même et incapable de prendre soin de cet enfant sans défense. Je vais emmener l\'enfant loin de vous. »' },
+                ]} />
+                <ImReStep num="7" title="Soin de l'Enfant" items={[
+                  { label: 'Verbatim de validation', text: '« Tu es un garçon/une fille normal(e). Rien ne cloche chez toi. Tu as fait de ton mieux, personne n\'aurait pu faire mieux, pas même moi. Ce n\'était pas ta faute. Comme tout enfant, tu mérites mieux. »' },
+                  { label: 'Mise en sécurité', text: '« Sortons d\'ici pour aller dans un endroit meilleur. » (L\'emmener chez un proche fiable ou un lieu sûr imaginaire).' },
+                ]} />
+              </div>
+            </div>
+
+            {/* Phase IIIb */}
+            <div>
+              <h4 className="text-[11px] font-bold uppercase text-indigo-700 mb-2 border-b border-indigo-100 pb-1">
+                Phase IIIb — Activation de l&apos;Adulte Sain du Patient (Script 2)
+              </h4>
+              <div className="space-y-2">
+                <ImReStep num="8" title="Changement de Perspective et Posture" items={[
+                  { label: 'Entrée', text: '« Peux-tu imaginer entrer toi-même dans la scène en tant que l\'adulte que tu es aujourd\'hui ? »' },
+                  { label: 'Activation physique (Roediger)', text: 'Faire lever le patient. « Redresse-toi. Sens-tu la force dans ton dos ? C\'est ton côté puissant ! Ton cerveau a plusieurs réseaux, nous pouvons choisir sur lequel nous appuyer. »' },
+                  { label: 'Validation de la colère', text: '« Cette colère que tu sens, est-elle justifiée ? Oui ! C\'est ton mode Adulte Sain. Tu es debout sur tes deux jambes maintenant. »' },
+                ]} />
+                <ImReStep num="9" title="Confrontation et Soin par le Patient Adulte" items={[
+                  { label: 'Confrontation', text: 'Le patient utilise sa « colère constructive » (il peut imaginer être immense ou armé si besoin de supériorité).' },
+                  { label: 'Soin', text: '« Regarde l\'enfant qui est là. Que ressens-tu pour lui ? Que veux-tu lui dire ou faire pour prendre soin de lui ? »' },
+                  { label: 'Engagement', text: '« Peux-tu imaginer adopter cet enfant et ne plus jamais le laisser seul, en prenant soin de lui comme tu le fais pour tes propres enfants ? »' },
+                ]} />
+              </div>
+            </div>
+
+            {/* Phase IV */}
+            <div>
+              <h4 className="text-[11px] font-bold uppercase text-indigo-700 mb-2 border-b border-indigo-100 pb-1">
+                Phase IV — Intégration et Clôture
+              </h4>
+              <div className="space-y-2">
+                <ImReStep num="10" title="Retour et Solution Adaptative" items={[
+                  { label: 'Pont avec le présent', text: 'Ramener doucement l\'image de la situation initiale (étape 1).' },
+                  { label: 'Action corrective', text: '« Maintenant que tu es de nouveau dans cette scène, que voudrais-tu dire ou faire pour obtenir un meilleur résultat ? Comment les autres réagissent-ils ? »' },
+                ]} />
+                <ImReStep num="11" title="Take-home Message et Sortie" items={[
+                  { label: 'Évaluation du changement', text: '« Quelle est la différence entre ce que tu ressentais au début et ce que tu ressens maintenant ? »' },
+                  { label: 'Synthèse', text: '« Si tu devais résumer ce que tu as appris en une phrase, quel serait ton message à emporter ? »' },
+                  { label: 'Réveil', text: 'Compte à rebours de 10 à 1.' },
+                ]} />
+              </div>
+            </div>
+
+            {/* Devoirs */}
+            <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3">
+              <h4 className="text-[11px] font-semibold uppercase text-emerald-700 mb-1">Devoirs &amp; Suivi (Evidence-Based)</h4>
+              <p className="text-xs text-emerald-900 leading-relaxed">
+                <strong>Rituel du coucher :</strong> « Chaque soir, après t&apos;être brossé les dents, assieds-toi sur cette chaise spéciale.
+                Visualise ton enfant intérieur, demande-lui de quoi il a besoin et assure-le que tu es là pour lui. »
+              </p>
+            </div>
+
+            {/* Download PDF */}
+            <a
+              href="/protocole-imre.pdf"
+              download
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-indigo-600 text-white text-xs font-medium hover:bg-indigo-700 transition-colors"
+            >
+              <Download className="w-3.5 h-3.5" />
+              Télécharger le protocole ImRe (PDF)
+            </a>
+          </div>
+        </ExpandableCard>
+      </div>
+    </div>
+  );
+}
+
+function ImReStep({ num, title, items }: { num: string; title: string; items: { label: string; text: string }[] }) {
+  return (
+    <div className="rounded-lg border border-slate-200 bg-white p-3">
+      <h5 className="text-xs font-semibold text-slate-700 mb-2">
+        <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-indigo-100 text-indigo-700 text-[10px] font-bold mr-1.5">{num}</span>
+        {title}
+      </h5>
+      <div className="space-y-1.5 ml-6">
+        {items.map((item, i) => (
+          <div key={i}>
+            <span className="text-[11px] font-semibold text-slate-600">{item.label} : </span>
+            <span className="text-[11px] text-slate-500 leading-relaxed">{item.text}</span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
